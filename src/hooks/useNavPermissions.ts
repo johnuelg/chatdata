@@ -16,10 +16,51 @@ const NAV_PATHS_ORDERED = [
   { path: "/admin/settings", key: "settings" },
 ];
 
-/** Path-to-key mapping for nav permission lookups */
-const PATH_TO_KEY: Record<string, string> = Object.fromEntries(
-  NAV_PATHS_ORDERED.map(({ path, key }) => [path, key])
-);
+const NORMALIZED_NAV_KEYS = NAV_PATHS_ORDERED.map(({ key }) => key);
+
+function normalizePermissions(input?: NavPermissions): NavPermissions {
+  const normalized: NavPermissions = {};
+
+  for (const key of NORMALIZED_NAV_KEYS) {
+    const value = input?.[key];
+    normalized[key] = Array.isArray(value) ? value.filter((id): id is string => typeof id === "string") : [];
+  }
+
+  return normalized;
+}
+
+function resolvePathKey(pathname: string): string | null {
+  // Exact dashboard match
+  if (pathname === "/admin") return "dashboard";
+
+  // Match the most specific configured admin path for child routes as well
+  const match = [...NAV_PATHS_ORDERED]
+    .filter(({ path }) => path !== "/admin")
+    .sort((a, b) => b.path.length - a.path.length)
+    .find(({ path }) => pathname === path || pathname.startsWith(`${path}/`));
+
+  return match?.key ?? null;
+}
+
+function canAccessNavKey({
+  isAdmin,
+  permissions,
+  userRoleIds,
+  key,
+}: {
+  isAdmin: boolean;
+  permissions: NavPermissions;
+  userRoleIds?: string[];
+  key: string | null;
+}) {
+  if (isAdmin) return true;
+  if (!key) return true;
+
+  const allowedRoleIds = permissions[key] ?? [];
+  if (!userRoleIds || userRoleIds.length === 0) return false;
+
+  return userRoleIds.some((roleId) => allowedRoleIds.includes(roleId));
+}
 
 export function useNavPermissions() {
   return useQuery({
@@ -31,7 +72,7 @@ export function useNavPermissions() {
         .eq("key", "nav_permissions")
         .maybeSingle();
       if (error) throw error;
-      return (data?.value as NavPermissions) ?? {};
+      return normalizePermissions((data?.value as NavPermissions) ?? {});
     },
     staleTime: 1000 * 60 * 5,
   });
@@ -60,22 +101,22 @@ export function useUserCustomRoleIds() {
  * If no permissions are configured yet, all items are shown.
  */
 export function useNavItemFilter(isAdmin: boolean) {
-  const { data: permissions } = useNavPermissions();
-  const { data: userRoleIds } = useUserCustomRoleIds();
+  const { data: permissions, isLoading: permissionsLoading } = useNavPermissions();
+  const { data: userRoleIds, isLoading: rolesLoading } = useUserCustomRoleIds();
 
-  return (path: string): boolean => {
-    if (isAdmin) return true;
-    if (!permissions || Object.keys(permissions).length === 0) return true;
+  const loading = permissionsLoading || rolesLoading;
 
-    const key = PATH_TO_KEY[path];
-    if (!key) return true;
-
-    const allowedRoleIds = permissions[key];
-    if (!allowedRoleIds || allowedRoleIds.length === 0) return true;
-
-    if (!userRoleIds || userRoleIds.length === 0) return false;
-    return userRoleIds.some((roleId) => allowedRoleIds.includes(roleId));
+  const isNavAllowed = (path: string): boolean => {
+    const key = resolvePathKey(path);
+    return canAccessNavKey({
+      isAdmin,
+      permissions: permissions ?? normalizePermissions({}),
+      userRoleIds,
+      key,
+    });
   };
+
+  return { isNavAllowed, loading };
 }
 
 /**
@@ -96,18 +137,14 @@ export function useRoutePermissionCheck() {
   // While loading, don't block
   if (loading) return { allowed: true, loading: true };
 
-  // If no permissions configured, allow all
-  if (!permissions || Object.keys(permissions).length === 0) return { allowed: true, loading: false };
+  const key = resolvePathKey(location.pathname);
+  const allowed = canAccessNavKey({
+    isAdmin: !!isAdmin,
+    permissions: permissions ?? normalizePermissions({}),
+    userRoleIds,
+    key,
+  });
 
-  const path = location.pathname;
-  const key = PATH_TO_KEY[path];
-  if (!key) return { allowed: true, loading: false };
-
-  const allowedRoleIds = permissions[key];
-  if (!allowedRoleIds || allowedRoleIds.length === 0) return { allowed: true, loading: false };
-
-  if (!userRoleIds || userRoleIds.length === 0) return { allowed: false, loading: false };
-  const allowed = userRoleIds.some((roleId) => allowedRoleIds.includes(roleId));
   return { allowed, loading: false };
 }
 
@@ -125,13 +162,17 @@ export function useFirstPermittedPath() {
   if (loading) return { path: null, loading: true };
   if (isAdmin) return { path: "/admin", loading: false };
 
-  // No permissions configured → default dashboard
-  if (!permissions || Object.keys(permissions).length === 0) return { path: "/admin", loading: false };
+  const normalizedPermissions = permissions ?? normalizePermissions({});
 
   for (const { path, key } of NAV_PATHS_ORDERED) {
-    const allowedRoleIds = permissions[key];
-    if (!allowedRoleIds || allowedRoleIds.length === 0) return { path, loading: false };
-    if (userRoleIds?.some((roleId) => allowedRoleIds.includes(roleId))) return { path, loading: false };
+    if (canAccessNavKey({
+      isAdmin: false,
+      permissions: normalizedPermissions,
+      userRoleIds,
+      key,
+    })) {
+      return { path, loading: false };
+    }
   }
 
   // No permitted page found
