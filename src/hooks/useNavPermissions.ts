@@ -16,11 +16,6 @@ const NAV_PATHS_ORDERED = [
   { path: "/admin/settings", key: "settings" },
 ];
 
-/** Path-to-key mapping for nav permission lookups */
-const PATH_TO_KEY: Record<string, string> = Object.fromEntries(
-  NAV_PATHS_ORDERED.map(({ path, key }) => [path, key])
-);
-
 const NORMALIZED_NAV_KEYS = NAV_PATHS_ORDERED.map(({ key }) => key);
 
 function normalizePermissions(input?: NavPermissions): NavPermissions {
