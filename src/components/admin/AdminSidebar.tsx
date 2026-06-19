@@ -40,8 +40,10 @@ const AdminSidebar = ({ mobileOpen, onMobileClose }: AdminSidebarProps) => {
   const { data: isAdmin } = useIsAdmin();
   const { data: customRoles } = useCustomRoles();
   const { data: userRoleIds } = useUserCustomRoleIds();
-  const isNavAllowed = useNavItemFilter(!!isAdmin);
-  const filteredNavItems = navItems.filter((item) => isNavAllowed(item.path));
+  const { isNavAllowed, loading: navPermissionsLoading } = useNavItemFilter(!!isAdmin);
+  const filteredNavItems = navPermissionsLoading
+    ? []
+    : navItems.filter((item) => isNavAllowed(item.path));
 
   // Resolve display role
   const userRole = (() => {
@@ -93,7 +95,11 @@ const AdminSidebar = ({ mobileOpen, onMobileClose }: AdminSidebarProps) => {
 
       {/* Navigation */}
       <nav className="flex-1 py-3 px-2 lg:px-3 space-y-0.5 overflow-y-auto">
-        {filteredNavItems.map((item) => {
+        {navPermissionsLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+          </div>
+        ) : filteredNavItems.map((item) => {
           const active = isActive(item.path);
           return (
             <button
