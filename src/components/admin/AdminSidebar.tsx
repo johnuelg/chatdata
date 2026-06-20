@@ -40,7 +40,7 @@ const AdminSidebar = ({ mobileOpen, onMobileClose }: AdminSidebarProps) => {
   const { data: isAdmin } = useIsAdmin();
   const { data: customRoles } = useCustomRoles();
   const { data: userRoleIds } = useUserCustomRoleIds();
-  const { isNavAllowed, loading: navPermissionsLoading } = useNavItemFilter(!!isAdmin);
+  const { isNavAllowed, loading: navPermissionsLoading } = useNavItemFilter();
   const filteredNavItems = navPermissionsLoading
     ? []
     : navItems.filter((item) => isNavAllowed(item.path));
