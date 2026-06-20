@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useIsAdmin } from "@/hooks/useSiteSettings";
 import { Button } from "@/components/ui/button";
 import { Loader2, ShieldAlert } from "lucide-react";
 import AdminSidebar, { AdminMobileHeader } from "./AdminSidebar";
@@ -15,9 +14,16 @@ interface AdminLayoutProps {
 
 const AdminLayout = ({ children, allowNonAdmin = false }: AdminLayoutProps) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { data: isAdmin, isLoading: adminLoading } = useIsAdmin();
+  const { user, loading: authLoading } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!user) {
     return (
@@ -27,14 +33,6 @@ const AdminLayout = ({ children, allowNonAdmin = false }: AdminLayoutProps) => {
           <p className="text-muted-foreground">Please log in to access admin settings.</p>
           <Button onClick={() => navigate("/admin/login")}>Go to Login</Button>
         </div>
-      </div>
-    );
-  }
-
-  if (adminLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
