@@ -63,8 +63,11 @@ function canAccessNavKey({
 }
 
 export function useNavPermissions() {
+  const { user, loading: authLoading } = useAuth();
+
   return useQuery({
     queryKey: ["nav-permissions"],
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("site_settings")
@@ -79,10 +82,11 @@ export function useNavPermissions() {
 }
 
 export function useUserCustomRoleIds() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+
   return useQuery({
     queryKey: ["user-custom-role-ids", user?.id],
-    enabled: !!user,
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("user_custom_roles")
@@ -100,16 +104,21 @@ export function useUserCustomRoleIds() {
  * Admins always see everything. For other users, checks their custom roles against nav_permissions.
  * If no permissions are configured yet, all items are shown.
  */
-export function useNavItemFilter(isAdmin: boolean) {
+export function useNavItemFilter() {
+  const { user, loading: authLoading } = useAuth();
+  const { data: isAdmin, isLoading: adminLoading } = useIsAdmin();
   const { data: permissions, isLoading: permissionsLoading } = useNavPermissions();
   const { data: userRoleIds, isLoading: rolesLoading } = useUserCustomRoleIds();
 
-  const loading = permissionsLoading || rolesLoading;
+  const isAdminUser = !!isAdmin;
+  const loading = authLoading || adminLoading || permissionsLoading || (!isAdminUser && rolesLoading);
 
   const isNavAllowed = (path: string): boolean => {
+    if (!user || loading) return false;
+
     const key = resolvePathKey(path);
     return canAccessNavKey({
-      isAdmin,
+      isAdmin: isAdminUser,
       permissions: permissions ?? normalizePermissions({}),
       userRoleIds,
       key,
@@ -125,21 +134,25 @@ export function useNavItemFilter(isAdmin: boolean) {
  */
 export function useRoutePermissionCheck() {
   const location = useLocation();
+  const { user, loading: authLoading } = useAuth();
   const { data: isAdmin, isLoading: adminLoading } = useIsAdmin();
   const { data: permissions, isLoading: permsLoading } = useNavPermissions();
   const { data: userRoleIds, isLoading: rolesLoading } = useUserCustomRoleIds();
 
-  const loading = adminLoading || permsLoading || rolesLoading;
+  const isAdminUser = !!isAdmin;
+  const loading = authLoading || adminLoading || permsLoading || (!isAdminUser && rolesLoading);
 
   // Admins always allowed
-  if (isAdmin) return { allowed: true, loading };
+  if (isAdminUser) return { allowed: true, loading };
 
   // While loading, don't block
   if (loading) return { allowed: true, loading: true };
 
+  if (!user) return { allowed: false, loading: false };
+
   const key = resolvePathKey(location.pathname);
   const allowed = canAccessNavKey({
-    isAdmin: !!isAdmin,
+    isAdmin: isAdminUser,
     permissions: permissions ?? normalizePermissions({}),
     userRoleIds,
     key,
@@ -153,14 +166,17 @@ export function useRoutePermissionCheck() {
  * Admins always get "/admin". Non-admins get the first path their role allows.
  */
 export function useFirstPermittedPath() {
+  const { user, loading: authLoading } = useAuth();
   const { data: isAdmin, isLoading: adminLoading } = useIsAdmin();
   const { data: permissions, isLoading: permsLoading } = useNavPermissions();
   const { data: userRoleIds, isLoading: rolesLoading } = useUserCustomRoleIds();
 
-  const loading = adminLoading || permsLoading || rolesLoading;
+  const isAdminUser = !!isAdmin;
+  const loading = authLoading || adminLoading || permsLoading || (!isAdminUser && rolesLoading);
 
   if (loading) return { path: null, loading: true };
-  if (isAdmin) return { path: "/admin", loading: false };
+  if (!user) return { path: null, loading: false };
+  if (isAdminUser) return { path: "/admin", loading: false };
 
   const normalizedPermissions = permissions ?? normalizePermissions({});
 

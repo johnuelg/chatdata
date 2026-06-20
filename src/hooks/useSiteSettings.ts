@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { defaultLanguageSettings, mergeLanguageSettings, type SiteLanguageSettings } from "@/lib/site-language";
+import { useAuth } from "@/contexts/AuthContext";
 
 export interface SiteSettings {
   logo: { url: string; alt: string };
@@ -205,11 +206,14 @@ export function useSaveSiteSettings() {
 }
 
 export function useIsAdmin() {
+  const { user, loading: authLoading } = useAuth();
+
   return useQuery({
-    queryKey: ["is-admin"],
+    queryKey: ["is-admin", user?.id],
+    enabled: !authLoading,
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return false;
+
       const { data } = await supabase
         .from("user_roles")
         .select("role")
