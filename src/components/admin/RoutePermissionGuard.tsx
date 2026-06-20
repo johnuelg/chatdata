@@ -27,8 +27,8 @@ const RoutePermissionGuard = ({ children }: RoutePermissionGuardProps) => {
           <ShieldAlert className="w-12 h-12 text-destructive mx-auto" />
           <h2 className="font-heading font-bold text-xl text-foreground">Access Denied</h2>
           <p className="text-muted-foreground">You don't have permission to access this page.</p>
-          <Button variant="outline" onClick={() => navigate("/admin")}>
-            Back to Dashboard
+          <Button variant="outline" onClick={() => navigate("/admin/landing")}>
+            Go to Allowed Dashboard
           </Button>
         </div>
       </div>
