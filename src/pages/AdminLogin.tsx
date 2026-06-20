@@ -99,20 +99,33 @@ const AdminLogin = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Login failed");
 
-      const { data: roleData } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      const [adminRoleResult, customRoleResult] = await Promise.all([
+        supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id)
+          .eq("role", "admin")
+          .maybeSingle(),
+        supabase
+          .from("user_custom_roles")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id),
+      ]);
 
-      if (!roleData) {
+      if (adminRoleResult.error) throw adminRoleResult.error;
+      if (customRoleResult.error) throw customRoleResult.error;
+
+      const hasAdminRole = !!adminRoleResult.data;
+      const hasCustomRole = (customRoleResult.count ?? 0) > 0;
+
+      if (!hasAdminRole && !hasCustomRole) {
         await supabase.auth.signOut();
         toast({ title: t.denied, description: t.deniedDesc, variant: "destructive" });
         return;
       }
 
       toast({ title: t.welcome });
-      navigate("/admin/landing");
+      navigate("/admin/landing", { replace: true });
     } catch (error: any) {
       toast({ title: t.loginFailed, description: error.message, variant: "destructive" });
     } finally {
