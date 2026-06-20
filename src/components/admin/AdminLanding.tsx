@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useFirstPermittedPath } from "@/hooks/useNavPermissions";
+import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * Smart landing page that redirects users to their first permitted admin page.
@@ -9,17 +10,23 @@ import { useFirstPermittedPath } from "@/hooks/useNavPermissions";
  */
 const AdminLanding = () => {
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const { path, loading } = useFirstPermittedPath();
 
   useEffect(() => {
-    if (loading) return;
+    if (authLoading || loading) return;
+    if (!user) {
+      navigate("/admin/login", { replace: true });
+      return;
+    }
+
     if (path) {
       navigate(path, { replace: true });
     } else {
       // No permitted pages — send to login
       navigate("/admin/login", { replace: true });
     }
-  }, [path, loading, navigate]);
+  }, [user, path, authLoading, loading, navigate]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
