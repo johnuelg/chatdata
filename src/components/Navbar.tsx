@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Sun, Moon, ChevronDown, LogOut, Bot, FileText, BarChart3, Upload, Settings, Globe } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSiteSettings, useIsAdmin } from "@/hooks/useSiteSettings";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useFirstPermittedPath } from "@/hooks/useNavPermissions";
+import { supabase } from "@/integrations/supabase/client";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -14,8 +17,32 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { data: settings } = useSiteSettings();
   const { data: isAdmin } = useIsAdmin();
+  const { path: firstPermittedPath, loading: navPathLoading } = useFirstPermittedPath();
   const { lang, setLang } = useLanguage();
   const logo = settings?.logo;
+
+  const { data: profile } = useQuery({
+    queryKey: ["navbar-profile", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user!.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const signedInName =
+    profile?.full_name || user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User";
+
+  const goToAssignedDashboard = () => {
+    navigate(firstPermittedPath ?? "/admin/landing");
+  };
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
@@ -159,8 +186,18 @@ const Navbar = () => {
             </Button>
           )}
           {user ? (
-            <Button variant="hero" size="sm" className="rounded-full px-5 text-xs font-semibold" onClick={signOut}>
-              <LogOut className="w-3 h-3 mr-1" /> {lang === "ar" ? "خروج" : "Logout"}
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full px-4 text-xs font-semibold border-border/70 hover:bg-secondary/70"
+              onClick={goToAssignedDashboard}
+              disabled={navPathLoading}
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+                <span className="text-muted-foreground">{lang === "ar" ? "متصل:" : "Signed in:"}</span>
+                <span className="text-foreground">{signedInName}</span>
+              </span>
             </Button>
           ) : (
             <Button variant="hero" size="sm" className="rounded-full px-5 text-xs font-semibold" onClick={() => navigate("/admin/login")}>
@@ -220,6 +257,24 @@ const Navbar = () => {
               {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               {isDark ? "Light Mode" : "Dark Mode"}
             </button>
+            {user && (
+              <button
+                onClick={goToAssignedDashboard}
+                className="text-sm font-medium text-muted-foreground hover:text-primary py-2.5 px-3 rounded-lg transition-all duration-200 text-left"
+                disabled={navPathLoading}
+              >
+                {lang === "ar" ? `متصل: ${signedInName}` : `Signed in: ${signedInName}`}
+              </button>
+            )}
+            {user && (
+              <button
+                onClick={signOut}
+                className="text-sm font-medium text-muted-foreground hover:text-primary py-2.5 px-3 rounded-lg flex items-center gap-2 transition-all duration-200"
+              >
+                <LogOut className="w-4 h-4" />
+                {lang === "ar" ? "خروج" : "Logout"}
+              </button>
+            )}
           </div>
         </div>
       )}
