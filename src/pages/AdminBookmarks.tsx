@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { useChatBookmarks, useDeleteBookmark } from "@/hooks/useChatBookmarks";
 import { useChatConversations } from "@/hooks/useChatConversations";
 import { Bookmark, Search, Trash2, MessageSquare, Bot, User, Loader2 } from "lucide-react";
@@ -26,7 +25,6 @@ const AdminBookmarks = () => {
     conversations?.find((c) => c.id === convId)?.title ?? "Unknown Chat";
 
   return (
-    <AdminLayout allowNonAdmin>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -178,7 +176,6 @@ const AdminBookmarks = () => {
           </ScrollArea>
         </div>
       </div>
-    </AdminLayout>
   );
 };
 
