@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -67,10 +67,11 @@ const AdminLogin = () => {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [lang, setLang] = useState<Lang>("en");
-  const { toast } = useToast();
+  const { toast, dismiss } = useToast();
   const navigate = useNavigate();
   const { session } = useAuth();
   const { data: settings } = useSiteSettings();
+  const welcomedUserIdRef = useRef<string | null>(null);
 
   const t = translations[lang];
   const isRtl = lang === "ar";
@@ -82,11 +83,60 @@ const AdminLogin = () => {
   const loginTitle = loginSettings.title_en || t.hospitalName;
   const loginTitleAr = loginSettings.title_ar || t.hospitalNameAr;
 
+  const getDisplayName = (emailValue?: string | null, fullNameValue?: string | null) => {
+    return fullNameValue?.trim() || emailValue?.split("@")[0] || "User";
+  };
+
+  const validateRoleAccess = async (userId: string) => {
+    const [adminRoleResult, customRoleResult] = await Promise.all([
+      supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle(),
+      supabase
+        .from("user_custom_roles")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId),
+    ]);
+
+    if (adminRoleResult.error) throw adminRoleResult.error;
+    if (customRoleResult.error) throw customRoleResult.error;
+
+    return !!adminRoleResult.data || (customRoleResult.count ?? 0) > 0;
+  };
+
   useEffect(() => {
-    if (session) {
-      navigate("/admin/landing");
-    }
-  }, [session, navigate]);
+    const handleExistingSession = async () => {
+      if (!session?.user) return;
+
+      const userId = session.user.id;
+      if (welcomedUserIdRef.current === userId) {
+        navigate("/admin/landing", { replace: true });
+        return;
+      }
+
+      try {
+        const hasAccess = await validateRoleAccess(userId);
+        if (!hasAccess) {
+          await supabase.auth.signOut();
+          return;
+        }
+
+        dismiss();
+        toast({
+          title: `${lang === "ar" ? "مرحبًا" : "Welcome"}, ${getDisplayName(session.user.email, session.user.user_metadata?.full_name)}`,
+        });
+        welcomedUserIdRef.current = userId;
+        navigate("/admin/landing", { replace: true });
+      } catch {
+        await supabase.auth.signOut();
+      }
+    };
+
+    handleExistingSession();
+  }, [session, navigate, toast, dismiss, lang]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,32 +149,17 @@ const AdminLogin = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Login failed");
 
-      const [adminRoleResult, customRoleResult] = await Promise.all([
-        supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", user.id)
-          .eq("role", "admin")
-          .maybeSingle(),
-        supabase
-          .from("user_custom_roles")
-          .select("id", { count: "exact", head: true })
-          .eq("user_id", user.id),
-      ]);
+      const hasAccess = await validateRoleAccess(user.id);
 
-      if (adminRoleResult.error) throw adminRoleResult.error;
-      if (customRoleResult.error) throw customRoleResult.error;
-
-      const hasAdminRole = !!adminRoleResult.data;
-      const hasCustomRole = (customRoleResult.count ?? 0) > 0;
-
-      if (!hasAdminRole && !hasCustomRole) {
+      if (!hasAccess) {
         await supabase.auth.signOut();
         toast({ title: t.denied, description: t.deniedDesc, variant: "destructive" });
         return;
       }
 
-      toast({ title: t.welcome });
+      dismiss();
+      toast({ title: `${lang === "ar" ? "مرحبًا" : "Welcome"}, ${getDisplayName(user.email, user.user_metadata?.full_name)}` });
+      welcomedUserIdRef.current = user.id;
       navigate("/admin/landing", { replace: true });
     } catch (error: any) {
       toast({ title: t.loginFailed, description: error.message, variant: "destructive" });
