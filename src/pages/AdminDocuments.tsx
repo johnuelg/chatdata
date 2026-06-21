@@ -376,6 +376,7 @@ const AdminDocuments = () => {
   };
 
   return (
+    <>
       <div className="p-4 md:p-8 max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
@@ -1333,6 +1334,7 @@ const AdminDocuments = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </>
   );
 };
 
