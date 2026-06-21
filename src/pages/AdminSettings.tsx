@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Loader2, Save, Settings } from "lucide-react";
 import { SiteSettings, useSaveSiteSettings, useSiteSettings, useIsAdmin } from "@/hooks/useSiteSettings";
-import AdminLayout from "@/components/admin/AdminLayout";
 import SettingsAccount from "@/components/admin/settings/SettingsAccount";
 import SettingsLogoManagement from "@/components/admin/settings/SettingsLogoManagement";
 import SettingsRoles from "@/components/admin/settings/SettingsRoles";
@@ -57,11 +56,9 @@ const AdminSettings = () => {
 
   if (settingsLoading || !draftSettings) {
     return (
-      <AdminLayout allowNonAdmin>
         <div className="flex items-center justify-center h-full min-h-[60vh]">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
-      </AdminLayout>
     );
   }
 
@@ -102,7 +99,6 @@ const AdminSettings = () => {
   };
 
   return (
-    <AdminLayout allowNonAdmin>
       <div className="p-4 sm:p-6 lg:p-8 space-y-5 sm:space-y-6">
         <div className="flex items-center gap-3">
           <Settings className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
@@ -138,7 +134,6 @@ const AdminSettings = () => {
         {/* Tab Content */}
         {renderTab()}
       </div>
-    </AdminLayout>
   );
 };
 

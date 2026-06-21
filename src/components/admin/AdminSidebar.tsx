@@ -66,6 +66,11 @@ const AdminSidebar = ({ mobileOpen, onMobileClose }: AdminSidebarProps) => {
   };
 
   const handleNav = (path: string) => {
+    if (location.pathname === path) {
+      onMobileClose();
+      return;
+    }
+
     navigate(path);
     onMobileClose();
   };

@@ -1,5 +1,4 @@
 import { useAuth } from "@/contexts/AuthContext";
-import AdminLayout from "@/components/admin/AdminLayout";
 import {
   FileText,
   MessageSquare,
@@ -28,7 +27,6 @@ const AdminDashboard = () => {
   const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Admin";
 
   return (
-    <AdminLayout>
       <div className="p-4 sm:p-6 lg:p-8 space-y-6">
         {/* Greeting */}
         <div>
@@ -141,7 +139,6 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
-    </AdminLayout>
   );
 };
 

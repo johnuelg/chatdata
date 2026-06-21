@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { useDomains } from "@/hooks/useDomains";
 import { useUserDomains } from "@/hooks/useUserDomains";
 import { useIsAdmin } from "@/hooks/useSiteSettings";
@@ -369,7 +368,6 @@ const AdminChat = () => {
   );
 
   return (
-    <AdminLayout allowNonAdmin>
       <div className="flex h-[calc(100vh-0px)] lg:h-screen overflow-hidden">
         {/* ── Desktop Sidebar ── */}
         <div
@@ -660,7 +658,6 @@ const AdminChat = () => {
           </div>
         </div>
       </div>
-    </AdminLayout>
   );
 };
 

@@ -14,7 +14,7 @@ const RoutePermissionGuard = ({ children }: RoutePermissionGuardProps) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="h-full min-h-[60vh] bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
@@ -22,7 +22,7 @@ const RoutePermissionGuard = ({ children }: RoutePermissionGuardProps) => {
 
   if (!allowed) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="h-full min-h-[60vh] bg-background flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <ShieldAlert className="w-12 h-12 text-destructive mx-auto" />
           <h2 className="font-heading font-bold text-xl text-foreground">Access Denied</h2>

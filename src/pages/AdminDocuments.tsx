@@ -1,5 +1,4 @@
 import { useState } from "react";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { useDocuments, useUpdateDocument, useDeleteDocument } from "@/hooks/useDocuments";
 import { useDomains } from "@/hooks/useDomains";
 import { useDocumentFolders, useAddDocumentFolder } from "@/hooks/useDocumentFolders";
@@ -377,7 +376,7 @@ const AdminDocuments = () => {
   };
 
   return (
-    <AdminLayout>
+    <>
       <div className="p-4 md:p-8 max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
@@ -1335,7 +1334,7 @@ const AdminDocuments = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </AdminLayout>
+    </>
   );
 };
 

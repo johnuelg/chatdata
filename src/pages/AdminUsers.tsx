@@ -21,7 +21,6 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Search, Users, Pencil, Trash2, UserPlus, KeyRound, RefreshCw, Copy, Eye, EyeOff } from "lucide-react";
-import AdminLayout from "@/components/admin/AdminLayout";
 import {
   useCustomRoles, useUserCustomRoles, useAssignCustomRole, useRemoveCustomRole,
   type CustomRole,
@@ -338,7 +337,7 @@ const AdminUsers = () => {
   };
 
   return (
-    <AdminLayout>
+    <>
       <div className="p-4 sm:p-6 lg:p-8 space-y-5 sm:space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -815,7 +814,7 @@ const AdminUsers = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </AdminLayout>
+    </>
   );
 };
 
