@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Loader2, ShieldAlert } from "lucide-react";
@@ -46,7 +46,7 @@ const AdminLayout = ({ children, allowNonAdmin = false }: AdminLayoutProps) => {
       <div className="lg:ml-64 min-h-screen flex flex-col">
         <AdminMobileHeader onMenuOpen={() => setMobileOpen(true)} />
         <main className="flex-1">
-          {children}
+          {children ?? <Outlet />}
         </main>
       </div>
     </div>
