@@ -18,19 +18,59 @@ const MAX_TOTAL_CHARS = 60000;
 
 async function buildKnowledgeBase(
   supabase: ReturnType<typeof createClient>,
+  userId: string,
+  isAdmin: boolean,
   domainId: string | null,
 ): Promise<string> {
+  let allowedDocIds: string[] | null = null;
+
+  if (!isAdmin) {
+    const { data: accessRows, error: accessError } = await supabase
+      .from("document_user_access")
+      .select("document_id")
+      .eq("user_id", userId);
+
+    if (accessError) return "";
+
+    allowedDocIds = (accessRows ?? []).map((row: any) => row.document_id);
+    if (!allowedDocIds.length) return "";
+  }
+
   let q = supabase
     .from("documents")
-    .select("title, description, file_name, file_path, file_type, content_text, domain_id");
+    .select("id, title, description, file_name, file_path, file_type, content_text, domain_id");
+
+  if (allowedDocIds) q = q.in("id", allowedDocIds);
   if (domainId) q = q.eq("domain_id", domainId);
+
   const { data: docs, error } = await q.limit(50);
   if (error || !docs?.length) return "";
+
+  let visibleDocs = docs as any[];
+
+  if (!isAdmin) {
+    const { data: userDomainRows, error: userDomainError } = await supabase
+      .from("user_domains")
+      .select("domain_id")
+      .eq("user_id", userId);
+
+    if (userDomainError) return "";
+
+    const assignedDomainIds = (userDomainRows ?? []).map((row: any) => row.domain_id);
+    const hasDomainRestrictions = assignedDomainIds.length > 0;
+
+    if (hasDomainRestrictions) {
+      const allowedDomainSet = new Set(assignedDomainIds);
+      visibleDocs = visibleDocs.filter((doc) => !doc.domain_id || allowedDomainSet.has(doc.domain_id));
+    }
+  }
+
+  if (!visibleDocs.length) return "";
 
   const parts: string[] = [];
   let total = 0;
 
-  for (const d of docs as any[]) {
+  for (const d of visibleDocs) {
     let body: string = (d.content_text ?? "").trim();
 
     if (!body && TEXTUAL.test(d.file_name ?? "")) {
@@ -165,6 +205,12 @@ Deno.serve(async (req) => {
 
     const adminClient = createClient(supabaseUrl, serviceKey);
 
+    const { data: roleRows } = await adminClient
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id);
+    const isAdmin = (roleRows ?? []).some((r: any) => r.role === "admin");
+
     // Domain name + KB
     let domainName = "All Domains";
     if (domain_id) {
@@ -176,7 +222,7 @@ Deno.serve(async (req) => {
       if (dom?.name) domainName = dom.name;
     }
 
-    const kb = await buildKnowledgeBase(adminClient, domain_id);
+    const kb = await buildKnowledgeBase(adminClient, user.id, isAdmin, domain_id);
 
     const system = `You are a professional data analytics and reporting assistant for the "${domainName}" domain of a pediatric hospital.
 Your task is to transform raw data into a clean, polished, decision-ready response.

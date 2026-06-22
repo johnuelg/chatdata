@@ -1,10 +1,12 @@
 import { useState, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { FileText, Loader2, Upload, Plus, X, FolderPlus, CheckCircle2, AlertCircle, FileSearch, MinusCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useDocumentFolders, useAddDocumentFolder } from "@/hooks/useDocumentFolders";
 import { useDomains } from "@/hooks/useDomains";
 import { useAddDocument } from "@/hooks/useDocuments";
@@ -33,10 +35,50 @@ const UploadDocumentDialog = ({ open, onOpenChange }: Props) => {
   const addDocument = useAddDocument();
   const addFolder = useAddDocumentFolder();
 
+  const { data: isAdminUser = false } = useQuery({
+    queryKey: ["is-admin-for-document-upload", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user!.id)
+        .eq("role", "admin");
+      if (error) return false;
+      return (data ?? []).length > 0;
+    },
+  });
+
+  const { data: assignableUsers = [] } = useQuery({
+    queryKey: ["document-access-users"],
+    enabled: isAdminUser,
+    queryFn: async () => {
+      const [{ data: profiles, error: profilesError }, { data: roles, error: rolesError }] = await Promise.all([
+        supabase.from("profiles").select("id, full_name, email"),
+        supabase.from("user_roles").select("user_id, role"),
+      ]);
+
+      if (profilesError) throw profilesError;
+      if (rolesError) throw rolesError;
+
+      const adminUserIds = new Set((roles ?? []).filter((r) => r.role === "admin").map((r) => r.user_id));
+
+      return (profiles ?? [])
+        .filter((profile) => !adminUserIds.has(profile.id))
+        .map((profile) => ({
+          id: profile.id,
+          full_name: profile.full_name,
+          email: profile.email,
+        }));
+    },
+  });
+
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
   const [uploadDomain, setUploadDomain] = useState<string>("none");
   const [uploadFolder, setUploadFolder] = useState<string>("none");
   const [uploading, setUploading] = useState(false);
+  const [allUsersAllowed, setAllUsersAllowed] = useState(true);
+  const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set());
   const [dragOver, setDragOver] = useState(false);
   const [showNewFolder, setShowNewFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
@@ -89,6 +131,14 @@ const UploadDocumentDialog = ({ open, onOpenChange }: Props) => {
 
   const handleUpload = async () => {
     if (!uploadFiles.length) return;
+    if (!allUsersAllowed && selectedUserIds.size === 0) {
+      toast({
+        title: "Select at least one user",
+        description: "Choose one or more users, or enable All users before uploading.",
+        variant: "destructive",
+      });
+      return;
+    }
     setUploading(true);
     setStatuses(uploadFiles.map(() => ({ stage: "pending" as const })));
     let uploaded = 0;
@@ -137,7 +187,7 @@ const UploadDocumentDialog = ({ open, onOpenChange }: Props) => {
           });
 
           updateStatus(idx, { stage: "saving" });
-          await addDocument.mutateAsync({
+          const createdDocument = await addDocument.mutateAsync({
             title: file.name.replace(/\.[^/.]+$/, ""),
             description: "",
             file_name: file.name,
@@ -151,6 +201,24 @@ const UploadDocumentDialog = ({ open, onOpenChange }: Props) => {
             version: nextVersion,
             content_text: extraction.text,
           } as any);
+
+          const allowedUserIds = allUsersAllowed
+            ? assignableUsers.map((u) => u.id)
+            : Array.from(selectedUserIds);
+
+          if (allowedUserIds.length > 0) {
+            const accessRows = allowedUserIds.map((targetUserId) => ({
+              document_id: createdDocument.id,
+              user_id: targetUserId,
+              granted_by: user?.id ?? null,
+            }));
+
+            const { error: accessError } = await supabase
+              .from("document_user_access" as any)
+              .insert(accessRows as any);
+
+            if (accessError) throw accessError;
+          }
 
           if (extraction.error) {
             updateStatus(idx, { stage: "failed", error: `Saved, but extraction failed: ${extraction.error}` });
@@ -187,6 +255,8 @@ const UploadDocumentDialog = ({ open, onOpenChange }: Props) => {
     setUploadFiles([]);
     setUploadDomain("none");
     setUploadFolder("none");
+    setAllUsersAllowed(true);
+    setSelectedUserIds(new Set());
     setNewFolderName("");
     setShowNewFolder(false);
     setStatuses([]);
@@ -195,6 +265,17 @@ const UploadDocumentDialog = ({ open, onOpenChange }: Props) => {
   const removeFile = (index: number) => {
     setUploadFiles(prev => prev.filter((_, i) => i !== index));
     setStatuses(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const toggleSelectedUser = (userId: string) => {
+    const next = new Set(selectedUserIds);
+    if (next.has(userId)) {
+      next.delete(userId);
+    } else {
+      next.add(userId);
+    }
+    setSelectedUserIds(next);
+    if (next.size > 0) setAllUsersAllowed(false);
   };
 
   const handleFiles = (files: File[]) => {
@@ -314,6 +395,43 @@ const UploadDocumentDialog = ({ open, onOpenChange }: Props) => {
               </div>
             </div>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Document Visibility</label>
+            <div className="rounded-xl border border-border p-3 space-y-2 max-h-44 overflow-y-auto">
+              <label className="flex items-center gap-3 py-1 cursor-pointer">
+                <Checkbox
+                  checked={allUsersAllowed}
+                  onCheckedChange={(checked) => {
+                    const isChecked = !!checked;
+                    setAllUsersAllowed(isChecked);
+                    if (isChecked) setSelectedUserIds(new Set());
+                  }}
+                />
+                <span className="text-sm font-medium">All users</span>
+              </label>
+
+              {assignableUsers.map((targetUser) => (
+                <label key={targetUser.id} className="flex items-center gap-3 py-1 cursor-pointer">
+                  <Checkbox
+                    checked={allUsersAllowed || selectedUserIds.has(targetUser.id)}
+                    disabled={allUsersAllowed}
+                    onCheckedChange={() => toggleSelectedUser(targetUser.id)}
+                  />
+                  <span className="text-sm truncate">
+                    {targetUser.full_name || targetUser.email || "Unnamed user"}
+                  </span>
+                </label>
+              ))}
+
+              {isAdminUser && assignableUsers.length === 0 && (
+                <p className="text-xs text-muted-foreground">No non-admin users found.</p>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              A user must be selected here and also have access to the document's domain.
+            </p>
           </div>
 
           {/* New folder inline */}
