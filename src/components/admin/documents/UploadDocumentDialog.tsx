@@ -35,8 +35,23 @@ const UploadDocumentDialog = ({ open, onOpenChange }: Props) => {
   const addDocument = useAddDocument();
   const addFolder = useAddDocumentFolder();
 
+  const { data: isAdminUser = false } = useQuery({
+    queryKey: ["is-admin-for-document-upload", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user!.id)
+        .eq("role", "admin");
+      if (error) return false;
+      return (data ?? []).length > 0;
+    },
+  });
+
   const { data: assignableUsers = [] } = useQuery({
     queryKey: ["document-access-users"],
+    enabled: isAdminUser,
     queryFn: async () => {
       const [{ data: profiles, error: profilesError }, { data: roles, error: rolesError }] = await Promise.all([
         supabase.from("profiles").select("id, full_name, email"),
@@ -409,6 +424,10 @@ const UploadDocumentDialog = ({ open, onOpenChange }: Props) => {
                   </span>
                 </label>
               ))}
+
+              {isAdminUser && assignableUsers.length === 0 && (
+                <p className="text-xs text-muted-foreground">No non-admin users found.</p>
+              )}
             </div>
             <p className="text-xs text-muted-foreground">
               A user must be selected here and also have access to the document's domain.
