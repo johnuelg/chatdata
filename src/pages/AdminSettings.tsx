@@ -23,7 +23,7 @@ const allTabs = [
   { key: "login-page", label: "Login Page", adminOnly: true },
   { key: "language", label: "Language", adminOnly: true },
   { key: "quick-questions", label: "Quick Questions", adminOnly: false },
-  { key: "ai-provider", label: "AI Provider", adminOnly: false },
+  { key: "ai-provider", label: "AI Provider", adminOnly: true },
   { key: "data-management", label: "Data Management", adminOnly: false },
 ] as const;
 
