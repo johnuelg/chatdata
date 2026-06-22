@@ -116,6 +116,14 @@ const UploadDocumentDialog = ({ open, onOpenChange }: Props) => {
 
   const handleUpload = async () => {
     if (!uploadFiles.length) return;
+    if (!allUsersAllowed && selectedUserIds.size === 0) {
+      toast({
+        title: "Select at least one user",
+        description: "Choose one or more users, or enable All users before uploading.",
+        variant: "destructive",
+      });
+      return;
+    }
     setUploading(true);
     setStatuses(uploadFiles.map(() => ({ stage: "pending" as const })));
     let uploaded = 0;
