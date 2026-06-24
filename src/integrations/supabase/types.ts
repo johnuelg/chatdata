@@ -514,6 +514,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      user_has_domain_visibility: {
+        Args: { _domain_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "user"
