@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 export interface Document {
   id: string;
@@ -20,8 +21,11 @@ export interface Document {
 }
 
 export function useDocuments() {
+  const { user, loading: authLoading } = useAuth();
+
   return useQuery({
-    queryKey: ["documents"],
+    queryKey: ["documents", user?.id],
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("documents")
@@ -30,6 +34,7 @@ export function useDocuments() {
       if (error) throw error;
       return data as Document[];
     },
+    refetchOnMount: "always",
   });
 }
 
