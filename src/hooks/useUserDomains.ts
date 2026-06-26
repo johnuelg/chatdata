@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 export interface UserDomain {
   id: string;
@@ -9,8 +10,11 @@ export interface UserDomain {
 }
 
 export function useUserDomains() {
+  const { user, loading: authLoading } = useAuth();
+
   return useQuery({
-    queryKey: ["user-domains"],
+    queryKey: ["user-domains", user?.id],
+    enabled: !authLoading && !!user,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("user_domains" as any)
@@ -18,6 +22,7 @@ export function useUserDomains() {
       if (error) throw error;
       return (data ?? []) as unknown as UserDomain[];
     },
+    refetchOnMount: "always",
   });
 }
 
