@@ -203,7 +203,7 @@ const UploadDocumentDialog = ({ open, onOpenChange }: Props) => {
           } as any);
 
           const allowedUserIds = allUsersAllowed
-            ? assignableUsers.map((u) => u.id)
+            ? []
             : Array.from(selectedUserIds);
 
           if (allowedUserIds.length > 0) {
