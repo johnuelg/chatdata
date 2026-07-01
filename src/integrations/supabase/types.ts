@@ -141,6 +141,96 @@ export type Database = {
         }
         Relationships: []
       }
+      document_domain_visibility: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          document_id: string
+          domain_id: string
+          id: string
+          is_visible: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          document_id: string
+          domain_id: string
+          id?: string
+          is_visible: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          document_id?: string
+          domain_id?: string
+          id?: string
+          is_visible?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_domain_visibility_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_domain_visibility_domain_id_fkey"
+            columns: ["domain_id"]
+            isOneToOne: false
+            referencedRelation: "domains"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_folder_domain_visibility: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          domain_id: string
+          folder_id: string
+          id: string
+          is_visible: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          domain_id: string
+          folder_id: string
+          id?: string
+          is_visible: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          domain_id?: string
+          folder_id?: string
+          id?: string
+          is_visible?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_folder_domain_visibility_domain_id_fkey"
+            columns: ["domain_id"]
+            isOneToOne: false
+            referencedRelation: "domains"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_folder_domain_visibility_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "document_folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_folders: {
         Row: {
           created_at: string
@@ -148,6 +238,7 @@ export type Database = {
           domain_id: string | null
           id: string
           name: string
+          parent_folder_id: string | null
           updated_at: string
         }
         Insert: {
@@ -156,6 +247,7 @@ export type Database = {
           domain_id?: string | null
           id?: string
           name: string
+          parent_folder_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -164,6 +256,7 @@ export type Database = {
           domain_id?: string | null
           id?: string
           name?: string
+          parent_folder_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -172,6 +265,13 @@ export type Database = {
             columns: ["domain_id"]
             isOneToOne: false
             referencedRelation: "domains"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_folders_parent_folder_id_fkey"
+            columns: ["parent_folder_id"]
+            isOneToOne: false
+            referencedRelation: "document_folders"
             referencedColumns: ["id"]
           },
         ]
@@ -512,6 +612,14 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_document_visible_for_domain: {
+        Args: { _document_id: string; _domain_id: string; _folder_id: string }
+        Returns: boolean
+      }
+      is_folder_visible_for_domain: {
+        Args: { _domain_id: string; _folder_id: string }
         Returns: boolean
       }
       user_has_domain_visibility: {

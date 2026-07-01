@@ -6,6 +6,7 @@ export interface DocumentFolder {
   id: string;
   name: string;
   domain_id: string | null;
+  parent_folder_id: string | null;
   created_by: string | null;
   created_at: string;
   updated_at: string;
@@ -32,7 +33,7 @@ export function useDocumentFolders() {
 export function useAddDocumentFolder() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (folder: { name: string; domain_id?: string | null; created_by?: string | null }) => {
+    mutationFn: async (folder: { name: string; domain_id?: string | null; parent_folder_id?: string | null; created_by?: string | null }) => {
       const { data, error } = await supabase.from("document_folders").insert(folder).select().single();
       if (error) throw error;
       return data;
@@ -44,8 +45,12 @@ export function useAddDocumentFolder() {
 export function useUpdateDocumentFolder() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, name }: { id: string; name: string }) => {
-      const { error } = await supabase.from("document_folders").update({ name }).eq("id", id);
+    mutationFn: async ({ id, name, parent_folder_id }: { id: string; name?: string; parent_folder_id?: string | null }) => {
+      const payload: { name?: string; parent_folder_id?: string | null } = {};
+      if (typeof name === "string") payload.name = name;
+      if (parent_folder_id !== undefined) payload.parent_folder_id = parent_folder_id;
+
+      const { error } = await supabase.from("document_folders").update(payload).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["document_folders"] }),
