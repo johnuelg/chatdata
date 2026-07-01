@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Loader2, Lock, ShieldCheck } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useDomains } from "@/hooks/useDomains";
@@ -152,7 +152,7 @@ const SettingsDocumentAccess = () => {
     </Select>
   );
 
-  const renderFolderBranch = (parentId: string | null, depth = 0): React.ReactNode => {
+  const renderFolderBranch = (parentId: string | null, depth = 0): ReactNode => {
     const branch = foldersByParent.get(parentId ?? "root") ?? [];
     if (branch.length === 0) return null;
 
