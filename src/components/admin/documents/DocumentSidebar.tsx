@@ -213,6 +213,23 @@ const DocumentSidebar = ({
     </div>
   );
 
+  const renderFolderTree = (
+    domainId: string,
+    allDomainFolders: Array<{ id: string; name: string; count: number; parent_folder_id: string | null }>,
+    parentId: string | null,
+    depth = 0,
+  ): React.ReactNode => {
+    const nodes = allDomainFolders.filter((folder) => (folder.parent_folder_id ?? null) === parentId);
+    if (nodes.length === 0) return null;
+
+    return nodes.map((folder) => (
+      <div key={folder.id} style={{ marginLeft: depth > 0 ? `${depth * 12}px` : undefined }}>
+        {renderFolderItem(folder)}
+        {renderFolderTree(domainId, allDomainFolders, folder.id, depth + 1)}
+      </div>
+    ));
+  };
+
   const handleInlineAdd = async (domainId: string) => {
     if (!inlineFolderName.trim()) return;
     try {
@@ -307,7 +324,7 @@ const DocumentSidebar = ({
               )}
               <CollapsibleContent className="nav-collapsible overflow-hidden">
                 <div className="mb-1 ml-[1.75rem] border-l-2 border-muted pl-1">
-                  {domainFolders.map(f => renderFolderItem(f))}
+                  {renderFolderTree(d.id, domainFolders, null, 0)}
                   {inlineAddDomainId === d.id ? (
                     <div className="flex items-center gap-1.5 px-2 py-1.5 pl-7">
                       <Input

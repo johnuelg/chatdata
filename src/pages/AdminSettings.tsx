@@ -11,6 +11,7 @@ import SettingsPlaceholder from "@/components/admin/settings/SettingsPlaceholder
 import SettingsNavPermissions from "@/components/admin/settings/SettingsNavPermissions";
 import SettingsQuickQuestions from "@/components/admin/settings/SettingsQuickQuestions";
 import SettingsAiProvider from "@/components/admin/settings/SettingsAiProvider";
+import SettingsDocumentAccess from "@/components/admin/settings/SettingsDocumentAccess";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 
@@ -24,6 +25,7 @@ const allTabs = [
   { key: "language", label: "Language", adminOnly: true },
   { key: "quick-questions", label: "Quick Questions", adminOnly: false },
   { key: "ai-provider", label: "AI Provider", adminOnly: true },
+  { key: "document-access-control", label: "Document Access", adminOnly: true },
   { key: "data-management", label: "Data Management", adminOnly: false },
 ] as const;
 
@@ -94,6 +96,7 @@ const AdminSettings = () => {
       );
       case "quick-questions": return <SettingsQuickQuestions />;
       case "ai-provider": return <SettingsAiProvider />;
+      case "document-access-control": return <SettingsDocumentAccess />;
       case "data-management": return <SettingsPlaceholder title="Data Management" description="Manage data import, export, and cleanup operations." />;
     }
   };
