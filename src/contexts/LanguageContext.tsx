@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import type { SiteLanguageSettings } from "@/lib/site-language";
+import { mergeLanguageSettings } from "@/lib/site-language";
 
 type Lang = "en" | "ar";
 
@@ -15,7 +15,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const { data: settings } = useSiteSettings();
-  const langSettings = settings?.language as SiteLanguageSettings | undefined;
+  const langSettings = mergeLanguageSettings(settings?.language);
   const defaultLang = langSettings?.default_language || "en";
 
   const [lang, setLang] = useState<Lang>(() => {
@@ -37,10 +37,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
   const t = (section: string, field: string): string => {
     const translations = langSettings?.translations;
-    if (translations?.[section]?.[field]?.[lang]) {
-      return translations[section][field][lang];
-    }
-    return "";
+    return translations?.[section]?.[field]?.[lang] ?? "";
   };
 
   return (
