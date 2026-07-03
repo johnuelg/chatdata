@@ -11,17 +11,17 @@ const Footer = () => {
   const copyright = t("footer", "copyright") || (lang === "ar" ? "© 2026 مستشفى الطائف للأطفال. تقارير ذكية." : footer.copyright);
 
   return (
-    <footer className="border-t border-border/50 py-8 bg-muted/30">
+    <footer className="py-10 bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2.5">
+        <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-3 group">
           {logo?.url ? (
-            <img src={logo.url} alt={logo.alt} className="w-7 h-7 rounded-lg object-contain" />
+            <img src={logo.url} alt={logo.alt} className="h-9 w-9 object-contain transition-all duration-300 group-hover:scale-105" />
           ) : (
-            <img src="/images/hospital-logo.svg" alt="Taif Children's Hospital" className="w-7 h-7 rounded-lg object-contain" />
+            <img src="/images/hospital-logo.svg" alt="Taif Children's Hospital" className="h-9 w-9 object-contain transition-all duration-300 group-hover:scale-105" />
           )}
-          <span className="font-heading font-bold text-sm tracking-tight">{name}</span>
-        </div>
-        <p className="text-xs text-muted-foreground text-center font-medium">{copyright}</p>
+          <span className="font-heading font-semibold text-sm">{name}</span>
+        </button>
+        <p className="text-xs text-primary-foreground/75 text-center font-medium">{copyright}</p>
       </div>
     </footer>
   );
