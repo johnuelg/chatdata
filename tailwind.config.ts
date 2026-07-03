@@ -15,7 +15,8 @@ export default {
     extend: {
       fontFamily: {
         heading: ['Nunito', 'system-ui', 'sans-serif'],
-        body: ['Quicksand', 'system-ui', 'sans-serif'],
+        body: ['Open Sans', 'system-ui', 'sans-serif'],
+        arabic: ['Cairo', 'Open Sans', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
