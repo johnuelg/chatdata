@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Loader2, Lock, Globe, Heart, Star, Stethoscope, Baby, Syringe, Pill, Link2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, Lock, Globe, Heart, Star, Stethoscope, Baby, Syringe, Pill, Link2, Shield } from "lucide-react";
 
 type Lang = "en" | "ar";
 
@@ -55,7 +55,7 @@ const translations = {
 };
 
 const FloatingIcon = ({ icon: Icon, className }: { icon: any; className: string }) => (
-  <div className={`absolute text-primary/20 ${className}`}>
+  <div className={`absolute text-primary/25 animate-float ${className}`}>
     <Icon className="w-10 h-10" />
   </div>
 );
@@ -177,12 +177,13 @@ const AdminLogin = () => {
   }
 
   return (
-    <div className={`min-h-screen relative flex flex-col`} dir={isRtl ? "rtl" : "ltr"}>
+    <div className={`min-h-screen relative flex flex-col bg-primary-ice`} dir={isRtl ? "rtl" : "ltr"}>
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${bgImage})` }}
       />
+      <div className="absolute inset-0 bg-primary/10" />
 
       {/* Floating medical icons */}
       <FloatingIcon icon={Heart} className="top-[10%] left-[10%]" />
@@ -200,7 +201,7 @@ const AdminLogin = () => {
       <div className="absolute top-4 right-4 z-20">
         <button
           onClick={() => setLang(lang === "en" ? "ar" : "en")}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors text-sm font-medium"
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/30 backdrop-blur-sm text-primary-foreground hover:bg-card/40 transition-colors text-sm font-medium border border-card/40"
         >
           <Globe className="w-4 h-4" />
           {t.langLabel}
@@ -216,33 +217,33 @@ const AdminLogin = () => {
             alt="Hospital Logo"
             className="w-20 h-20 mx-auto mb-3 object-contain"
           />
-          <h1 className="text-2xl font-heading font-bold text-white drop-shadow-md">
+          <h1 className="text-2xl font-heading font-bold text-primary-foreground drop-shadow-md">
             {loginTitle}
           </h1>
-          <p className="text-white/90 text-base font-medium drop-shadow-sm" style={{ fontFamily: "'Noto Sans Arabic', sans-serif" }}>
+          <p className="text-primary-foreground/90 text-base font-medium drop-shadow-sm">
             {loginTitleAr}
           </p>
         </div>
 
         {/* Login Card */}
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
+        <div className="w-full max-w-md bg-card/90 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-card/70 animate-slide-up">
           {/* Lock Icon */}
           <div className="flex justify-center mb-4">
-            <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
-              <Lock className="w-6 h-6 text-primary" />
+            <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center shadow-elegant">
+              <Lock className="w-6 h-6 text-primary-foreground" />
             </div>
           </div>
 
           <h2 className="text-center text-xl font-heading font-bold text-primary mb-1">
             {t.title}
           </h2>
-          <p className="text-center text-sm text-black/60 mb-6">
+          <p className="text-center text-sm text-muted-foreground mb-6">
             {t.subtitle}
           </p>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="admin-email" className="text-black text-sm font-semibold">
+              <Label htmlFor="admin-email" className="text-foreground text-sm font-semibold">
                 {t.email}
               </Label>
               <Input
@@ -252,12 +253,12 @@ const AdminLogin = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-primary/5 border-primary/20 rounded-xl h-12 text-sm text-black"
+                className="bg-primary-ice/80 border-primary/20 rounded-xl h-12 text-sm text-foreground"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="admin-password" className="text-black text-sm font-semibold">
+              <Label htmlFor="admin-password" className="text-foreground text-sm font-semibold">
                 {t.password}
               </Label>
               <div className="relative">
@@ -269,7 +270,7 @@ const AdminLogin = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="bg-primary/5 border-primary/20 rounded-xl h-12 text-sm pr-10 text-black"
+                  className="bg-primary-ice/80 border-primary/20 rounded-xl h-12 text-sm pr-10 text-foreground"
                 />
                 <button
                   type="button"
@@ -290,14 +291,14 @@ const AdminLogin = () => {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="w-4 h-4 rounded border-primary/30 text-primary focus:ring-primary"
               />
-              <label htmlFor="remember-me" className="text-sm text-black/70 cursor-pointer">
+              <label htmlFor="remember-me" className="text-sm text-muted-foreground cursor-pointer">
                 {t.remember}
               </label>
             </div>
 
             <Button
               type="submit"
-              className="w-full rounded-xl h-12 text-base font-semibold bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg"
+              className="w-full rounded-xl h-12 text-base font-semibold gradient-primary text-primary-foreground shadow-elegant hover:shadow-glow"
               disabled={loading}
             >
               {loading ? (
@@ -311,9 +312,9 @@ const AdminLogin = () => {
           </form>
 
           {/* Notice */}
-          <div className="mt-5 flex items-start gap-3 p-3 rounded-xl bg-primary/5 border border-primary/10">
-            <div className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0" />
-            <p className="text-xs text-black/60 leading-relaxed">
+          <div className="mt-5 flex items-start gap-2.5 p-3 rounded-xl bg-primary/5 border border-primary/20">
+            <Shield className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
+            <p className="text-xs text-muted-foreground leading-relaxed">
               {t.notice}
             </p>
           </div>
@@ -322,7 +323,7 @@ const AdminLogin = () => {
 
       {/* Footer */}
       <div className="relative z-10 text-center pb-4">
-        <p className="text-white/80 text-sm drop-shadow-sm">
+        <p className="text-primary-foreground/80 text-sm drop-shadow-sm">
           {t.powered}
         </p>
       </div>
