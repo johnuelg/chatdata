@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Bot } from "lucide-react";
+import { ArrowRight, Bot } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState, useEffect } from "react";
 import FloatingDomainIcons from "@/components/FloatingDomainIcons";
+import AnimatedChatDemo from "@/components/AnimatedChatDemo";
 
 const DEFAULT_TYPEWRITER_WORDS = ["Answers", "Summaries", "Charts", "Reports", "Insights"];
 const TYPING_SPEED = 100;
@@ -112,7 +113,7 @@ const HeroSection = () => {
   const line2After = line2Parts[1] || "";
 
   return (
-    <section id="home" className="relative min-h-screen flex flex-col items-center justify-center pt-16 overflow-hidden gradient-bg">
+    <section id="home" className="relative min-h-screen flex flex-col items-center justify-center pt-20 overflow-hidden gradient-hero">
       {/* Soft blue radial gradient backdrop */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -173,7 +174,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="inline-flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-primary/15 bg-primary/[0.06] text-primary text-[12px] sm:text-[13px] font-semibold mb-10 backdrop-blur-sm tracking-[0.01em] normal-case shadow-[0_1px_2px_hsl(var(--primary)/0.08)]"
+          className="inline-flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-primary/20 bg-primary/10 text-primary text-[12px] sm:text-[13px] font-semibold mb-10 backdrop-blur-sm tracking-[0.01em] shadow-sm"
         >
           <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/15">
             <Bot className="w-3 h-3" strokeWidth={2.5} />
@@ -186,7 +187,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-          className="font-heading font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.05] mb-8 tracking-[-0.035em] text-balance"
+          className="font-heading font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.05] mb-8 tracking-tight text-balance"
         >
           {titleLine1}
           <br />
@@ -200,7 +201,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-          className="max-w-2xl mx-auto text-muted-foreground text-base sm:text-lg md:text-xl mb-10 leading-[1.7] font-normal text-pretty tracking-[-0.005em]"
+          className="max-w-3xl mx-auto text-muted-foreground text-base sm:text-lg md:text-xl mb-10 leading-[1.7] font-body text-pretty"
         >
           {renderHighlighted(description, lang)}
         </motion.p>
@@ -212,76 +213,26 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
           className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-16"
         >
-          <Button variant="hero" size="lg" className="rounded-full px-8 gap-2 w-full sm:w-auto shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] text-[15px] font-semibold tracking-[-0.01em]">
+          <Button variant="hero" size="lg" className="rounded-xl px-8 gap-2 w-full sm:w-auto shadow-elegant hover:shadow-glow transition-all duration-300 hover:scale-[1.02] text-[15px] font-semibold">
             {ctaPrimary} <ArrowRight className="w-4 h-4" />
           </Button>
-          <Button variant="hero-outline" size="lg" className="rounded-full px-8 w-full sm:w-auto hover:scale-[1.02] transition-all duration-300 text-[15px] font-semibold tracking-[-0.01em]">
+          <Button variant="hero-outline" size="lg" className="rounded-xl px-8 w-full sm:w-auto hover:scale-[1.02] transition-all duration-300 text-[15px] font-semibold">
             {ctaSecondary}
           </Button>
         </motion.div>
 
-        {/* Chat Mockup */}
+        {/* Chat Demo */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-          className="max-w-md mx-auto"
+          className="max-w-3xl mx-auto"
         >
-          <div className="rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-muted/30">
-              <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-coral" />
-                <div className="w-3 h-3 rounded-full bg-amber" />
-                <div className="w-3 h-3 rounded-full bg-emerald" />
-              </div>
-              <span className="text-xs text-muted-foreground font-medium">
-                {lang === "ar" ? "مساعد البيانات الذكي" : "AI Data Assistant"}
-              </span>
-              <Sparkles className="w-3.5 h-3.5 text-primary" />
-            </div>
-            <div className="p-4 min-h-[160px] flex flex-col justify-end gap-3">
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.8 }}
-                className="self-end bg-primary/10 text-foreground text-sm px-4 py-2.5 rounded-2xl rounded-br-md max-w-[85%]"
-              >
-                {lang === "ar"
-                  ? "راجع أداء مؤشرات الأداء الرئيسية لقسم الطوارئ لشهر أبريل 2025"
-                  : "Review the current KPI performance for Emergency Department (ED) for April 2025"}
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.2 }}
-                className="self-start flex items-center gap-2 text-muted-foreground text-sm"
-              >
-                <div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center">
-                  <Sparkles className="w-3 h-3 text-primary" />
-                </div>
-                <span className="flex items-center gap-1 font-medium">
-                  {lang === "ar" ? "يكتب" : "Typing"}
-                  <span className="flex gap-0.5">
-                    <span className="w-1 h-1 rounded-full bg-primary animate-pulse-glow" />
-                    <span className="w-1 h-1 rounded-full bg-primary animate-pulse-glow" style={{ animationDelay: "0.3s" }} />
-                    <span className="w-1 h-1 rounded-full bg-primary animate-pulse-glow" style={{ animationDelay: "0.6s" }} />
-                  </span>
-                </span>
-              </motion.div>
-            </div>
-            <div className="px-4 pb-4">
-              <div className="flex items-center gap-2 rounded-full border border-border/50 bg-secondary/50 px-4 py-2.5">
-                <span className="text-sm text-muted-foreground flex-1 font-medium">
-                  {lang === "ar" ? "اسأل عن بيانات الرعاية الصحية..." : "Ask about your healthcare data..."}
-                </span>
-                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm">
-                  <ArrowRight className="w-4 h-4 text-primary-foreground" />
-                </div>
-              </div>
-            </div>
-          </div>
+          <AnimatedChatDemo />
         </motion.div>
       </div>
+
+      <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-background to-transparent" />
     </section>
   );
 };
