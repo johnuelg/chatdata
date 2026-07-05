@@ -30,17 +30,16 @@ const AnimatedChatDemo = () => {
     lang === "ar"
       ? [
           { label: "زيارات المرضى", value: "7,450" },
-          { label: "من الدخول للطبيب", value: "5 دقائق", valueClass: "text-sky-500 font-bold" },
-          { label: "من الطبيب للقرار", value: "6 دقائق", valueClass: "text-sky-500 font-bold" },
-          { label: "من القرار للتصرف", value: "0:45 دقيقة", valueClass: "text-green-500 font-bold" },
+          { label: "من الدخول للطبيب", value: "5 دقائق", valueClass: "text-primary font-bold" },
+          { label: "من الطبيب للقرار", value: "6 دقائق", valueClass: "text-primary font-bold" },
+          { label: "من القرار للتصرف", value: "0:45 دقيقة", valueClass: "text-primary font-bold" },
           { label: "حالات عاجلة", value: "51%" },
           { label: "حالات غير عاجلة", value: "49%" },
-          { label: "من الباب إلى إنهاء الخدمة", value: "99%", valueClass: "text-sky-500 font-bold" },
+          { label: "من الباب إلى إنهاء الخدمة", value: "99%", valueClass: "text-primary font-bold" },
           { label: "خروج ضد النصيحة الطبية", value: "35 (0.5%)" },
           { label: "معدل الوفيات", value: "0.03% (2 مرضى)" },
         ]
       : [
-          { label: "Patient Visits", value: "7,450" },
           { label: "Patient Visits", value: "7,450" },
           { label: "Door to Doctor", value: "5 min", valueClass: "text-primary font-bold" },
           { label: "Doctor to Decision", value: "6 min", valueClass: "text-primary font-bold" },
