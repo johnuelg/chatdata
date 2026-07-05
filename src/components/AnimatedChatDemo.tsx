@@ -66,7 +66,7 @@ const AnimatedChatDemo = () => {
       for (let i = 0; i <= text.length; i += 1) {
         if (cancelled) return;
         setInputText(text.slice(0, i));
-        await delay(52 + Math.random() * 36);
+        await delay(60 + Math.random() * 40);
       }
       setIsTypingInput(false);
       setShowSend(true);
@@ -107,7 +107,7 @@ const AnimatedChatDemo = () => {
               {responseRows.map(({ label, value, valueClass }, idx) => (
                 <div
                   key={`${label}-${idx}`}
-                  className="flex items-center gap-2 opacity-0 animate-[fade-in_0.25s_ease-out_forwards]"
+                  className="flex items-center gap-2 opacity-0 animate-[fade-in_0.3s_ease-out_forwards]"
                   style={{ animationDelay: `${idx * 150}ms` }}
                 >
                   <span className="text-muted-foreground">{label}:</span>
@@ -115,7 +115,7 @@ const AnimatedChatDemo = () => {
                 </div>
               ))}
               <div
-                className="pt-3 mt-3 border-t border-border/60 opacity-0 animate-[fade-in_0.25s_ease-out_forwards]"
+                className="pt-3 mt-3 border-t border-border/60 opacity-0 animate-[fade-in_0.3s_ease-out_forwards]"
                 style={{ animationDelay: "1200ms" }}
               >
                 <p className="text-sm text-muted-foreground leading-relaxed">{insightText}</p>
@@ -186,10 +186,10 @@ const AnimatedChatDemo = () => {
               </div>
               <div className="rounded-2xl rounded-tl-md px-4 py-3 bg-secondary/70">
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <span>{lang === "ar" ? "يكتب" : "Typing"}</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.2s_ease-in-out_infinite]" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.2s_ease-in-out_0.15s_infinite]" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.2s_ease-in-out_0.3s_infinite]" />
+                  <span>{lang === "ar" ? "يكتب" : "typing"}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.4s_ease-in-out_infinite]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.4s_ease-in-out_0.2s_infinite]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.4s_ease-in-out_0.4s_infinite]" />
                 </div>
               </div>
             </div>
