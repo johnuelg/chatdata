@@ -18,8 +18,8 @@ const AnimatedChatDemo = () => {
 
   const userMessage =
     lang === "ar"
-      ? "راجع أداء مؤشرات الأداء الرئيسية لقسم الطوارئ لشهر أبريل 2025"
-      : "Review the current KPI performance for Emergency Department (ED) for April 2025";
+      ? "راجع أداء مؤشرات الأداء الرئيسية لقسم الطوارئ لشهر أبريل 2026"
+      : "Review the current KPI performance for Emergency Department (ED) for April 2026";
 
   const insightText =
     lang === "ar"
@@ -41,12 +41,13 @@ const AnimatedChatDemo = () => {
         ]
       : [
           { label: "Patient Visits", value: "7,450" },
-          { label: "Door to Doctor", value: "5 min", valueClass: "text-sky-500 font-bold" },
-          { label: "Doctor to Decision", value: "6 min", valueClass: "text-sky-500 font-bold" },
-          { label: "Decision to Disposition", value: "0:45 min", valueClass: "text-green-500 font-bold" },
+          { label: "Patient Visits", value: "7,450" },
+          { label: "Door to Doctor", value: "5 min", valueClass: "text-primary font-bold" },
+          { label: "Doctor to Decision", value: "6 min", valueClass: "text-primary font-bold" },
+          { label: "Decision to Disposition", value: "0:45 min", valueClass: "text-primary font-bold" },
           { label: "Urgent", value: "51%" },
           { label: "Non-Urgent", value: "49%" },
-          { label: "Door to Disposition", value: "99%", valueClass: "text-sky-500 font-bold" },
+          { label: "Door to Disposition", value: "99%", valueClass: "text-primary font-bold" },
           { label: "DAMA", value: "35 (0.5%)" },
           { label: "Mortality Rate", value: "0.03% (2 patients)" },
         ];
@@ -79,22 +80,22 @@ const AnimatedChatDemo = () => {
       setIsAssistantTyping(false);
       setShowSend(false);
 
-      await delay(1500);
+      await delay(220);
       if (cancelled) return;
 
       await typeMessage(userMessage);
-      await delay(800);
+      await delay(500);
       if (cancelled) return;
 
       setInputText("");
       setShowSend(false);
       setMessages([{ role: "user", content: userMessage }]);
 
-      await delay(1000);
+      await delay(720);
       if (cancelled) return;
 
       setIsAssistantTyping(true);
-      await delay(2000);
+      await delay(2350);
       if (cancelled) return;
       setIsAssistantTyping(false);
 
@@ -107,25 +108,25 @@ const AnimatedChatDemo = () => {
               {responseRows.map(({ label, value, valueClass }, idx) => (
                 <div
                   key={`${label}-${idx}`}
-                  className="flex items-center gap-2 opacity-0 animate-[fade-in_0.3s_ease-out_forwards]"
-                  style={{ animationDelay: `${idx * 150}ms` }}
+                  className="flex items-center gap-2 opacity-0 animate-[fade-in_0.36s_ease-out_forwards]"
+                  style={{ animationDelay: `${idx * 160}ms` }}
                 >
                   <span className="text-muted-foreground">{label}:</span>
                   <span className={valueClass ?? "font-semibold text-foreground"}>{value}</span>
                 </div>
               ))}
               <div
-                className="pt-3 mt-3 border-t border-border/60 opacity-0 animate-[fade-in_0.3s_ease-out_forwards]"
-                style={{ animationDelay: "1200ms" }}
+                className="pt-4 mt-3 border-t border-border/60 opacity-0 animate-[fade-in_0.4s_ease-out_forwards]"
+                style={{ animationDelay: "1320ms" }}
               >
-                <p className="text-sm text-muted-foreground leading-relaxed">{insightText}</p>
+                <p className="text-[1.05rem] text-muted-foreground/95 leading-relaxed italic text-center">{insightText}</p>
               </div>
             </div>
           ),
         },
       ]);
 
-      await delay(10000);
+      await delay(8000);
       if (!cancelled) run();
     };
 
@@ -138,41 +139,41 @@ const AnimatedChatDemo = () => {
 
   return (
     <div className="relative mx-auto max-w-2xl">
-      <div className="rounded-2xl border border-border/60 bg-card/95 shadow-[0_10px_34px_hsl(var(--primary)/0.13)] overflow-hidden backdrop-blur-sm">
-        <div className="bg-muted/35 border-b border-border/60 px-4 py-3 flex items-center gap-3">
+      <div className="rounded-[30px] border border-primary/20 bg-card/80 shadow-[0_14px_40px_hsl(var(--primary)/0.18)] overflow-hidden backdrop-blur-md">
+        <div className="bg-gradient-to-r from-muted/45 via-muted/20 to-muted/45 border-b border-border/60 px-5 py-3.5 flex items-center gap-3">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-coral/80" />
             <span className="w-2.5 h-2.5 rounded-full bg-amber/80" />
             <span className="w-2.5 h-2.5 rounded-full bg-emerald/80" />
           </div>
-          <span className="text-xs font-semibold text-muted-foreground flex-1 text-center">
+          <span className="text-xs sm:text-sm font-semibold text-muted-foreground/95 flex-1 text-center tracking-wide">
             {lang === "ar" ? "مساعد البيانات الذكي" : "AI Data Assistant"}
           </span>
           <Stethoscope className="w-4 h-4 text-primary" />
         </div>
 
-        <div ref={chatRef} className="min-h-[300px] max-h-[360px] overflow-y-auto p-4 md:p-6 space-y-4">
+        <div ref={chatRef} className="min-h-[300px] max-h-[365px] overflow-y-auto p-4 md:p-6 space-y-4">
           {messages.map((message, idx) => (
             <div
               key={`${message.role}-${idx}`}
-              className={`flex items-start gap-3 animate-fade-in ${message.role === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex items-start gap-3 animate-[fade-in_0.35s_ease-out] ${message.role === "user" ? "justify-end" : "justify-start"}`}
             >
               {message.role === "assistant" && (
-                <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
-                  <Bot className="w-4 h-4 text-primary" />
+                <div className="w-9 h-9 rounded-full border border-border/60 bg-secondary/60 flex items-center justify-center shrink-0 shadow-sm">
+                  <Bot className="w-4 h-4 text-primary/90" />
                 </div>
               )}
               <div
                 className={`max-w-[86%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                   message.role === "user"
-                    ? "bg-primary text-primary-foreground rounded-tr-md"
-                    : "bg-secondary/70 text-foreground rounded-tl-md"
+                    ? "bg-primary/85 text-primary-foreground rounded-tr-md shadow-[0_8px_22px_hsl(var(--primary)/0.28)]"
+                    : "bg-secondary/55 text-foreground rounded-tl-md"
                 }`}
               >
                 {typeof message.content === "string" ? <p>{message.content}</p> : message.content}
               </div>
               {message.role === "user" && (
-                <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-full border border-primary/25 bg-primary/15 flex items-center justify-center shrink-0">
                   <User className="w-4 h-4 text-primary" />
                 </div>
               )}
@@ -180,11 +181,11 @@ const AnimatedChatDemo = () => {
           ))}
 
           {isAssistantTyping && (
-            <div className="flex items-start gap-3 animate-fade-in">
-              <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
-                <Bot className="w-4 h-4 text-primary" />
+            <div className="flex items-start gap-3 animate-[fade-in_0.35s_ease-out]">
+              <div className="w-9 h-9 rounded-full border border-border/60 bg-secondary/60 flex items-center justify-center shrink-0">
+                <Bot className="w-4 h-4 text-primary/90" />
               </div>
-              <div className="rounded-2xl rounded-tl-md px-4 py-3 bg-secondary/70">
+              <div className="rounded-2xl rounded-tl-md px-4 py-3 bg-secondary/55 border border-border/60">
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <span>{lang === "ar" ? "يكتب" : "typing"}</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.4s_ease-in-out_infinite]" />
@@ -196,8 +197,8 @@ const AnimatedChatDemo = () => {
           )}
         </div>
 
-        <div className="px-4 pb-4">
-          <div className={`flex items-center gap-3 rounded-xl border px-4 py-3 transition-all duration-300 ${isTypingInput ? "border-primary/50 ring-1 ring-primary/20" : "border-border/60"} bg-secondary/35`}>
+        <div className="px-4 pb-4 pt-1">
+          <div className={`flex items-center gap-3 rounded-2xl border px-4 py-3.5 transition-all duration-300 ${isTypingInput ? "border-primary/60 ring-1 ring-primary/30" : "border-border/60"} bg-secondary/35`}>
             <div className="flex-1 min-h-[20px] text-sm text-foreground">
               {inputText ? (
                 <span>
@@ -210,7 +211,7 @@ const AnimatedChatDemo = () => {
                 </span>
               )}
             </div>
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${showSend ? "bg-primary scale-105" : "bg-primary/55"}`}>
+            <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${showSend ? "bg-primary scale-105" : "bg-primary/60"}`}>
               {showSend ? <Send className="w-4 h-4 text-primary-foreground" /> : <Stethoscope className="w-4 h-4 text-primary-foreground" />}
             </div>
           </div>
