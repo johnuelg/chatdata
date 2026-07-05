@@ -23,22 +23,32 @@ const AnimatedChatDemo = () => {
 
   const insightText =
     lang === "ar"
-      ? "النتيجة: كفاءة القسم أعلى من الهدف بنسبة 12% مع فرص تحسين طفيفة في زمن إنهاء الإجراءات."
-      : "Key finding: ED efficiency is 12% above target, with minor optimization opportunities in disposition workflow.";
+      ? "💡 النتائج الرئيسية: كفاءة قسم الطوارئ أعلى من الهدف بنسبة 12%. زمن من الباب إلى الطبيب يُظهر أداء فرز ممتازًا. يُنصح ببعض التعديلات الطفيفة في سير عمل إنهاء الإجراءات."
+      : "💡 Key Findings: ED efficiency is 12% above target. Door-to-doctor times show excellent triage performance. Consider minor workflow adjustments for disposition delays.";
 
-  const responseRows =
+  const responseRows: Array<{ label: string; value: string; valueClass?: string }> =
     lang === "ar"
       ? [
-          ["زيارات المرضى", "7,450"],
-          ["من الدخول للطبيب", "5 دقائق"],
-          ["من الطبيب للقرار", "6 دقائق"],
-          ["من القرار للتصرف", "45 دقيقة"],
+          { label: "زيارات المرضى", value: "7,450" },
+          { label: "من الدخول للطبيب", value: "5 دقائق", valueClass: "text-sky-500 font-bold" },
+          { label: "من الطبيب للقرار", value: "6 دقائق", valueClass: "text-sky-500 font-bold" },
+          { label: "من القرار للتصرف", value: "0:45 دقيقة", valueClass: "text-green-500 font-bold" },
+          { label: "حالات عاجلة", value: "51%" },
+          { label: "حالات غير عاجلة", value: "49%" },
+          { label: "من الباب إلى إنهاء الخدمة", value: "99%", valueClass: "text-sky-500 font-bold" },
+          { label: "خروج ضد النصيحة الطبية", value: "35 (0.5%)" },
+          { label: "معدل الوفيات", value: "0.03% (2 مرضى)" },
         ]
       : [
-          ["Patient Visits", "7,450"],
-          ["Door to Doctor", "5 min"],
-          ["Doctor to Decision", "6 min"],
-          ["Decision to Disposition", "45 min"],
+          { label: "Patient Visits", value: "7,450" },
+          { label: "Door to Doctor", value: "5 min", valueClass: "text-sky-500 font-bold" },
+          { label: "Doctor to Decision", value: "6 min", valueClass: "text-sky-500 font-bold" },
+          { label: "Decision to Disposition", value: "0:45 min", valueClass: "text-green-500 font-bold" },
+          { label: "Urgent", value: "51%" },
+          { label: "Non-Urgent", value: "49%" },
+          { label: "Door to Disposition", value: "99%", valueClass: "text-sky-500 font-bold" },
+          { label: "DAMA", value: "35 (0.5%)" },
+          { label: "Mortality Rate", value: "0.03% (2 patients)" },
         ];
 
   useEffect(() => {
@@ -56,7 +66,7 @@ const AnimatedChatDemo = () => {
       for (let i = 0; i <= text.length; i += 1) {
         if (cancelled) return;
         setInputText(text.slice(0, i));
-        await delay(52 + Math.random() * 36);
+        await delay(60 + Math.random() * 40);
       }
       setIsTypingInput(false);
       setShowSend(true);
@@ -69,22 +79,22 @@ const AnimatedChatDemo = () => {
       setIsAssistantTyping(false);
       setShowSend(false);
 
-      await delay(1200);
+      await delay(1500);
       if (cancelled) return;
 
       await typeMessage(userMessage);
-      await delay(700);
+      await delay(800);
       if (cancelled) return;
 
       setInputText("");
       setShowSend(false);
       setMessages([{ role: "user", content: userMessage }]);
 
-      await delay(900);
+      await delay(1000);
       if (cancelled) return;
 
       setIsAssistantTyping(true);
-      await delay(1800);
+      await delay(2000);
       if (cancelled) return;
       setIsAssistantTyping(false);
 
@@ -94,19 +104,19 @@ const AnimatedChatDemo = () => {
           role: "assistant",
           content: (
             <div className="space-y-2">
-              {responseRows.map(([label, value], idx) => (
+              {responseRows.map(({ label, value, valueClass }, idx) => (
                 <div
                   key={`${label}-${idx}`}
-                  className="flex items-center gap-2 opacity-0 animate-[fade-in_0.25s_ease-out_forwards]"
-                  style={{ animationDelay: `${idx * 120}ms` }}
+                  className="flex items-center gap-2 opacity-0 animate-[fade-in_0.3s_ease-out_forwards]"
+                  style={{ animationDelay: `${idx * 150}ms` }}
                 >
                   <span className="text-muted-foreground">{label}:</span>
-                  <span className="font-semibold text-foreground">{value}</span>
+                  <span className={valueClass ?? "font-semibold text-foreground"}>{value}</span>
                 </div>
               ))}
               <div
-                className="pt-3 mt-3 border-t border-border/60 opacity-0 animate-[fade-in_0.25s_ease-out_forwards]"
-                style={{ animationDelay: "700ms" }}
+                className="pt-3 mt-3 border-t border-border/60 opacity-0 animate-[fade-in_0.3s_ease-out_forwards]"
+                style={{ animationDelay: "1200ms" }}
               >
                 <p className="text-sm text-muted-foreground leading-relaxed">{insightText}</p>
               </div>
@@ -115,7 +125,7 @@ const AnimatedChatDemo = () => {
         },
       ]);
 
-      await delay(7600);
+      await delay(10000);
       if (!cancelled) run();
     };
 
@@ -176,10 +186,10 @@ const AnimatedChatDemo = () => {
               </div>
               <div className="rounded-2xl rounded-tl-md px-4 py-3 bg-secondary/70">
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <span>{lang === "ar" ? "يكتب" : "Typing"}</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.2s_ease-in-out_infinite]" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.2s_ease-in-out_0.15s_infinite]" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.2s_ease-in-out_0.3s_infinite]" />
+                  <span>{lang === "ar" ? "يكتب" : "typing"}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.4s_ease-in-out_infinite]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.4s_ease-in-out_0.2s_infinite]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.4s_ease-in-out_0.4s_infinite]" />
                 </div>
               </div>
             </div>
