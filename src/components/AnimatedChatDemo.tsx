@@ -67,7 +67,7 @@ const AnimatedChatDemo = () => {
       for (let i = 0; i <= text.length; i += 1) {
         if (cancelled) return;
         setInputText(text.slice(0, i));
-        await delay(50 + Math.random() * 50);
+        await delay(60 + Math.random() * 40);
       }
       setIsTypingInput(false);
       setShowSend(true);
@@ -181,7 +181,7 @@ const AnimatedChatDemo = () => {
           {messages.map((message, idx) => (
             <div
               key={`${message.role}-${idx}`}
-              className={`flex items-start gap-3 animate-[fade-in_0.35s_ease-out] ${message.role === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex items-start gap-3 animate-[chat-bubble-in_0.42s_cubic-bezier(0.22,1,0.36,1)] ${message.role === "user" ? "justify-end" : "justify-start"}`}
             >
               {message.role === "assistant" && (
                 <div className="w-9 h-9 rounded-full border border-border/60 bg-secondary/60 flex items-center justify-center shrink-0 shadow-sm">
@@ -235,13 +235,13 @@ const AnimatedChatDemo = () => {
           ))}
 
           {isAssistantTyping && (
-            <div className="flex items-start gap-3 animate-[fade-in_0.35s_ease-out]">
+            <div className="flex items-start gap-3 animate-[chat-bubble-in_0.42s_cubic-bezier(0.22,1,0.36,1)]">
               <div className="w-9 h-9 rounded-full border border-border/60 bg-secondary/60 flex items-center justify-center shrink-0">
                 <Bot className="w-4 h-4 text-primary/90" />
               </div>
               <div className="rounded-2xl rounded-tl-md px-4 py-3 bg-secondary/55 border border-border/60">
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <span>typing</span>
+                  <span>typing...</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.4s_ease-in-out_infinite]" />
                   <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.4s_ease-in-out_0.2s_infinite]" />
                   <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.4s_ease-in-out_0.4s_infinite]" />
@@ -263,8 +263,21 @@ const AnimatedChatDemo = () => {
                 <span className="text-muted-foreground">Ask about your healthcare data...</span>
               )}
             </div>
-            <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${showSend ? "bg-primary scale-105" : "bg-primary/60"}`}>
-              {showSend ? <Send className="w-4 h-4 text-primary-foreground" /> : <Stethoscope className="w-4 h-4 text-primary-foreground" />}
+            <div
+              className={`relative w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
+                showSend ? "bg-primary scale-105 shadow-[0_0_0_4px_hsl(var(--primary)/0.18)]" : "bg-primary/60 scale-100"
+              }`}
+            >
+              <Send
+                className={`absolute w-4 h-4 text-primary-foreground transition-all duration-300 ${
+                  showSend ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1"
+                }`}
+              />
+              <Stethoscope
+                className={`absolute w-4 h-4 text-primary-foreground transition-all duration-300 ${
+                  showSend ? "opacity-0 -translate-y-1" : "opacity-100 translate-y-0"
+                }`}
+              />
             </div>
           </div>
         </div>
