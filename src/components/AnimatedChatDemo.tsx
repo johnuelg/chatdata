@@ -1,14 +1,41 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Bot, Send, Stethoscope, User } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
 
-interface ChatMessage {
-  role: "user" | "assistant";
-  content: string | React.ReactNode;
+type MetricTone = "default" | "sky" | "green";
+
+interface AssistantRow {
+  label: string;
+  value: string;
+  tone?: MetricTone;
 }
 
+interface AssistantRowProgress extends AssistantRow {
+  typedValue: string;
+}
+
+interface ChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string | { rows: AssistantRowProgress[]; insight: string };
+}
+
+const USER_PROMPT = "Review the current KPI performance for Emergency Department (ED) for April 2025";
+const INSIGHT_TEXT =
+  "💡 Key Findings: ED efficiency is 12% above target. Door-to-doctor times show excellent triage performance. Consider minor workflow adjustments for disposition delays.";
+
+const RESPONSE_ROWS: AssistantRow[] = [
+  { label: "Patient Visits", value: "7,450" },
+  { label: "Door to Doctor", value: "5 min", tone: "sky" },
+  { label: "Doctor to Decision", value: "6 min", tone: "sky" },
+  { label: "Decision to Disposition", value: "0:45 min", tone: "green" },
+  { label: "Urgent", value: "51%" },
+  { label: "Non-Urgent", value: "49%" },
+  { label: "Door to Layout", value: "99%", tone: "sky" },
+  { label: "DAMA", value: "35 (0.5%)" },
+  { label: "Mortality Rate", value: "0.03% (2 patients)" },
+];
+
 const AnimatedChatDemo = () => {
-  const { lang } = useLanguage();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState("");
   const [isTypingInput, setIsTypingInput] = useState(false);
@@ -16,125 +43,126 @@ const AnimatedChatDemo = () => {
   const [showSend, setShowSend] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
 
-  const userMessage =
-    lang === "ar"
-      ? "راجع أداء مؤشرات الأداء الرئيسية لقسم الطوارئ لشهر أبريل 2026"
-      : "Review the current KPI performance for Emergency Department (ED) for April 2026";
-
-  const insightText =
-    lang === "ar"
-      ? "💡 النتائج الرئيسية: كفاءة قسم الطوارئ أعلى من الهدف بنسبة 12%. زمن من الباب إلى الطبيب يُظهر أداء فرز ممتازًا. يُنصح ببعض التعديلات الطفيفة في سير عمل إنهاء الإجراءات."
-      : "💡 Key Findings: ED efficiency is 12% above target. Door-to-doctor times show excellent triage performance. Consider minor workflow adjustments for disposition delays.";
-
-  const responseRows: Array<{ label: string; value: string; valueClass?: string }> =
-    lang === "ar"
-      ? [
-          { label: "زيارات المرضى", value: "7,450" },
-          { label: "من الدخول للطبيب", value: "5 دقائق", valueClass: "text-primary font-bold" },
-          { label: "من الطبيب للقرار", value: "6 دقائق", valueClass: "text-primary font-bold" },
-          { label: "من القرار للتصرف", value: "0:45 دقيقة", valueClass: "text-primary font-bold" },
-          { label: "حالات عاجلة", value: "51%" },
-          { label: "حالات غير عاجلة", value: "49%" },
-          { label: "من الباب إلى إنهاء الخدمة", value: "99%", valueClass: "text-primary font-bold" },
-          { label: "خروج ضد النصيحة الطبية", value: "35 (0.5%)" },
-          { label: "معدل الوفيات", value: "0.03% (2 مرضى)" },
-        ]
-      : [
-          { label: "Patient Visits", value: "7,450" },
-          { label: "Door to Doctor", value: "5 min", valueClass: "text-primary font-bold" },
-          { label: "Doctor to Decision", value: "6 min", valueClass: "text-primary font-bold" },
-          { label: "Decision to Disposition", value: "0:45 min", valueClass: "text-primary font-bold" },
-          { label: "Urgent", value: "51%" },
-          { label: "Non-Urgent", value: "49%" },
-          { label: "Door to Disposition", value: "99%", valueClass: "text-primary font-bold" },
-          { label: "DAMA", value: "35 (0.5%)" },
-          { label: "Mortality Rate", value: "0.03% (2 patients)" },
-        ];
+  const valueColorByTone = useMemo(
+    () => ({
+      default: "hsl(var(--foreground))",
+      sky: "hsl(var(--primary))",
+      green: "hsl(var(--emerald))",
+    }),
+    []
+  );
 
   useEffect(() => {
     if (!chatRef.current) return;
     chatRef.current.scrollTo({ top: chatRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, isAssistantTyping]);
+  }, [messages, isAssistantTyping, inputText]);
 
   useEffect(() => {
     let cancelled = false;
 
     const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    const typeMessage = async (text: string) => {
+    const typeInputPrompt = async (text: string) => {
       setIsTypingInput(true);
       for (let i = 0; i <= text.length; i += 1) {
         if (cancelled) return;
         setInputText(text.slice(0, i));
-        await delay(60 + Math.random() * 40);
+        await delay(50 + Math.random() * 50);
       }
       setIsTypingInput(false);
       setShowSend(true);
     };
 
-    const run = async () => {
+    const typeAssistantResponse = async (assistantId: string) => {
+      const initRows = RESPONSE_ROWS.map((row) => ({ ...row, typedValue: "" }));
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === assistantId
+            ? {
+                ...msg,
+                content: { rows: initRows, insight: "" },
+              }
+            : msg
+        )
+      );
+
+      for (let rowIdx = 0; rowIdx < RESPONSE_ROWS.length; rowIdx += 1) {
+        const currentRow = RESPONSE_ROWS[rowIdx];
+        for (let i = 0; i <= currentRow.value.length; i += 1) {
+          if (cancelled) return;
+          const nextValue = currentRow.value.slice(0, i);
+          setMessages((prev) =>
+            prev.map((msg) => {
+              if (msg.id !== assistantId || typeof msg.content === "string") return msg;
+              const rows = msg.content.rows.map((row, index) =>
+                index === rowIdx ? { ...row, typedValue: nextValue } : row
+              );
+              return { ...msg, content: { ...msg.content, rows } };
+            })
+          );
+          await delay(36 + Math.random() * 44);
+        }
+        await delay(130 + Math.random() * 90);
+      }
+
+      for (let i = 0; i <= INSIGHT_TEXT.length; i += 1) {
+        if (cancelled) return;
+        const nextInsight = INSIGHT_TEXT.slice(0, i);
+        setMessages((prev) =>
+          prev.map((msg) => {
+            if (msg.id !== assistantId || typeof msg.content === "string") return msg;
+            return { ...msg, content: { ...msg.content, insight: nextInsight } };
+          })
+        );
+        await delay(26 + Math.random() * 32);
+      }
+    };
+
+    const runDemoLoop = async () => {
       setMessages([]);
       setInputText("");
       setIsTypingInput(false);
       setIsAssistantTyping(false);
       setShowSend(false);
 
-      await delay(220);
+      await delay(260);
       if (cancelled) return;
 
-      await typeMessage(userMessage);
-      await delay(500);
+      await typeInputPrompt(USER_PROMPT);
+      await delay(900 + Math.random() * 500);
       if (cancelled) return;
 
       setInputText("");
       setShowSend(false);
-      setMessages([{ role: "user", content: userMessage }]);
 
-      await delay(720);
+      const userMessageId = `user-${Date.now()}`;
+      setMessages([{ id: userMessageId, role: "user", content: USER_PROMPT }]);
+
+      await delay(900);
       if (cancelled) return;
 
       setIsAssistantTyping(true);
-      await delay(2350);
+      await delay(1200 + Math.random() * 700);
       if (cancelled) return;
       setIsAssistantTyping(false);
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: (
-            <div className="space-y-2">
-              {responseRows.map(({ label, value, valueClass }, idx) => (
-                <div
-                  key={`${label}-${idx}`}
-                  className="flex items-center gap-2 opacity-0 animate-[fade-in_0.36s_ease-out_forwards]"
-                  style={{ animationDelay: `${idx * 160}ms` }}
-                >
-                  <span className="text-muted-foreground">{label}:</span>
-                  <span className={valueClass ?? "font-semibold text-foreground"}>{value}</span>
-                </div>
-              ))}
-              <div
-                className="pt-4 mt-3 border-t border-border/60 opacity-0 animate-[fade-in_0.4s_ease-out_forwards]"
-                style={{ animationDelay: "1320ms" }}
-              >
-                <p className="text-[1.05rem] text-muted-foreground/95 leading-relaxed italic text-center">{insightText}</p>
-              </div>
-            </div>
-          ),
-        },
-      ]);
+      const assistantId = `assistant-${Date.now()}`;
+      setMessages((prev) => [...prev, { id: assistantId, role: "assistant", content: { rows: [], insight: "" } }]);
 
-      await delay(8000);
-      if (!cancelled) run();
+      await typeAssistantResponse(assistantId);
+      if (cancelled) return;
+
+      await delay(6000);
+      if (cancelled) return;
+      runDemoLoop();
     };
 
-    run();
+    runDemoLoop();
 
     return () => {
       cancelled = true;
     };
-  }, [insightText, userMessage, lang]);
+  }, []);
 
   return (
     <div className="relative mx-auto max-w-2xl">
@@ -145,9 +173,7 @@ const AnimatedChatDemo = () => {
             <span className="w-2.5 h-2.5 rounded-full bg-amber/80" />
             <span className="w-2.5 h-2.5 rounded-full bg-emerald/80" />
           </div>
-          <span className="text-xs sm:text-sm font-semibold text-muted-foreground/95 flex-1 text-center tracking-wide">
-            {lang === "ar" ? "مساعد البيانات الذكي" : "AI Data Assistant"}
-          </span>
+          <span className="text-xs sm:text-sm font-semibold text-muted-foreground/95 flex-1 text-center tracking-wide">AI Data Assistant</span>
           <Stethoscope className="w-4 h-4 text-primary" />
         </div>
 
@@ -169,7 +195,36 @@ const AnimatedChatDemo = () => {
                     : "bg-secondary/55 text-foreground rounded-tl-md"
                 }`}
               >
-                {typeof message.content === "string" ? <p>{message.content}</p> : message.content}
+                {typeof message.content === "string" ? (
+                  <p>{message.content}</p>
+                ) : (
+                  <div className="space-y-2.5">
+                    {message.content.rows.map((row, idx) => (
+                      <div key={`${row.label}-${idx}`} className="flex flex-wrap items-center gap-2 animate-[fade-in_0.28s_ease-out]">
+                        <span className="text-muted-foreground">{row.label}:</span>
+                        <span
+                          className={`${row.tone === "sky" || row.tone === "green" ? "font-bold" : "font-semibold"}`}
+                          style={{ color: valueColorByTone[row.tone ?? "default"] }}
+                        >
+                          {row.typedValue}
+                          {row.typedValue.length > 0 && row.typedValue.length < row.value.length ? (
+                            <span className="inline-block align-middle w-0.5 h-3.5 ml-1 bg-primary/80 animate-blink" />
+                          ) : null}
+                        </span>
+                      </div>
+                    ))}
+                    {message.content.rows.length > 0 && (
+                      <div className="pt-3 mt-3 border-t border-border/60 animate-[fade-in_0.35s_ease-out]">
+                        <p className="text-sm sm:text-[0.97rem] text-muted-foreground/95 leading-relaxed italic">
+                          {message.content.insight}
+                          {message.content.insight.length > 0 && message.content.insight.length < INSIGHT_TEXT.length ? (
+                            <span className="inline-block align-middle w-0.5 h-3.5 ml-1 bg-primary/80 animate-blink" />
+                          ) : null}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               {message.role === "user" && (
                 <div className="w-9 h-9 rounded-full border border-primary/25 bg-primary/15 flex items-center justify-center shrink-0">
@@ -205,9 +260,7 @@ const AnimatedChatDemo = () => {
                   {isTypingInput && <span className="inline-block align-middle w-0.5 h-4 ml-1 bg-primary animate-blink" />}
                 </span>
               ) : (
-                <span className="text-muted-foreground">
-                  {lang === "ar" ? "اسأل عن بيانات الرعاية الصحية..." : "Ask about your healthcare data..."}
-                </span>
+                <span className="text-muted-foreground">Ask about your healthcare data...</span>
               )}
             </div>
             <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${showSend ? "bg-primary scale-105" : "bg-primary/60"}`}>
