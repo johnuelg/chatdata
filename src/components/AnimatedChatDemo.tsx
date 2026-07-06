@@ -241,7 +241,7 @@ const AnimatedChatDemo = () => {
               </div>
               <div className="rounded-2xl rounded-tl-md px-4 py-3 bg-secondary/55 border border-border/60">
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <span>{lang === "ar" ? "يكتب" : "typing"}</span>
+                  <span>typing</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.4s_ease-in-out_infinite]" />
                   <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.4s_ease-in-out_0.2s_infinite]" />
                   <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[typing-dot_1.4s_ease-in-out_0.4s_infinite]" />
