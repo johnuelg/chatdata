@@ -165,7 +165,7 @@ const AnimatedChatDemo = () => {
   }, []);
 
   return (
-    <div className="relative mx-auto max-w-2xl">
+    <div className="relative w-full max-w-2xl text-left">
       <div className="rounded-[30px] border border-primary/20 bg-card/80 shadow-[0_14px_40px_hsl(var(--primary)/0.18)] overflow-hidden backdrop-blur-md">
         <div className="bg-gradient-to-r from-muted/45 via-muted/20 to-muted/45 border-b border-border/60 px-5 py-3.5 flex items-center gap-3">
           <div className="flex items-center gap-1.5">
@@ -253,7 +253,7 @@ const AnimatedChatDemo = () => {
 
         <div className="px-4 pb-4 pt-1">
           <div className={`flex items-center gap-3 rounded-2xl border px-4 py-3.5 transition-all duration-300 ${isTypingInput ? "border-primary/60 ring-1 ring-primary/30" : "border-border/60"} bg-secondary/35`}>
-            <div className="flex-1 min-h-[20px] text-sm text-foreground">
+            <div className="flex-1 min-h-[20px] text-sm text-foreground text-left">
               {inputText ? (
                 <span>
                   {inputText}
