@@ -73,49 +73,23 @@ const AnimatedChatDemo = () => {
       setShowSend(true);
     };
 
-    const typeAssistantResponse = async (assistantId: string) => {
-      const initRows = RESPONSE_ROWS.map((row) => ({ ...row, typedValue: "" }));
-      setMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === assistantId
-            ? {
-                ...msg,
-                content: { rows: initRows, insight: "" },
-              }
-            : msg
-        )
-      );
+    const showAssistantResponseInstantly = async () => {
+      setIsAssistantTyping(true);
+      await delay(1100 + Math.random() * 500);
+      if (cancelled) return;
+      setIsAssistantTyping(false);
 
-      for (let rowIdx = 0; rowIdx < RESPONSE_ROWS.length; rowIdx += 1) {
-        const currentRow = RESPONSE_ROWS[rowIdx];
-        for (let i = 0; i <= currentRow.value.length; i += 1) {
-          if (cancelled) return;
-          const nextValue = currentRow.value.slice(0, i);
-          setMessages((prev) =>
-            prev.map((msg) => {
-              if (msg.id !== assistantId || typeof msg.content === "string") return msg;
-              const rows = msg.content.rows.map((row, index) =>
-                index === rowIdx ? { ...row, typedValue: nextValue } : row
-              );
-              return { ...msg, content: { ...msg.content, rows } };
-            })
-          );
-          await delay(36 + Math.random() * 44);
-        }
-        await delay(130 + Math.random() * 90);
-      }
+      const assistantId = `assistant-${Date.now()}`;
+      const fullRows = RESPONSE_ROWS.map((row) => ({ ...row, typedValue: row.value }));
 
-      for (let i = 0; i <= INSIGHT_TEXT.length; i += 1) {
-        if (cancelled) return;
-        const nextInsight = INSIGHT_TEXT.slice(0, i);
-        setMessages((prev) =>
-          prev.map((msg) => {
-            if (msg.id !== assistantId || typeof msg.content === "string") return msg;
-            return { ...msg, content: { ...msg.content, insight: nextInsight } };
-          })
-        );
-        await delay(26 + Math.random() * 32);
-      }
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: assistantId,
+          role: "assistant",
+          content: { rows: fullRows, insight: INSIGHT_TEXT },
+        },
+      ]);
     };
 
     const runDemoLoop = async () => {
@@ -141,15 +115,7 @@ const AnimatedChatDemo = () => {
       await delay(900);
       if (cancelled) return;
 
-      setIsAssistantTyping(true);
-      await delay(1200 + Math.random() * 700);
-      if (cancelled) return;
-      setIsAssistantTyping(false);
-
-      const assistantId = `assistant-${Date.now()}`;
-      setMessages((prev) => [...prev, { id: assistantId, role: "assistant", content: { rows: [], insight: "" } }]);
-
-      await typeAssistantResponse(assistantId);
+      await showAssistantResponseInstantly();
       if (cancelled) return;
 
       await delay(6000);
