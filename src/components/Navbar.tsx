@@ -117,19 +117,19 @@ const Navbar = () => {
         <button
           type="button"
           onClick={() => scrollTo("#home")}
-          className="flex items-center gap-3 group text-left"
+          className="brand-lockup brand-logo-link group"
         >
           {logo?.url ? (
             <img
               src={logo.url}
               alt={logo.alt}
-              className="h-10 w-10 md:h-12 md:w-12 object-contain transition-all duration-300 group-hover:scale-105"
+              className="brand-logo brand-logo-header brand-logo-header-hover"
             />
           ) : (
             <img
               src="/images/hospital-logo.svg"
               alt="Taif Children's Hospital"
-              className="h-10 w-10 md:h-12 md:w-12 object-contain transition-all duration-300 group-hover:scale-105"
+              className="brand-logo brand-logo-header brand-logo-header-hover"
             />
           )}
           <div className="hidden sm:block leading-tight">
