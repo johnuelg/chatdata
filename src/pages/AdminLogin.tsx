@@ -215,7 +215,7 @@ const AdminLogin = () => {
           <img
             src={loginLogo}
             alt="Hospital Logo"
-            className="w-20 h-20 mx-auto mb-3 object-contain"
+            className="brand-logo brand-logo-login mx-auto mb-3"
           />
           <h1 className="text-2xl font-heading font-bold text-primary-foreground drop-shadow-md">
             {loginTitle}
