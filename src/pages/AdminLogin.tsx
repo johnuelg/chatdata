@@ -211,7 +211,7 @@ const AdminLogin = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center relative z-10 px-4 py-8">
         {/* Logo & Hospital Name */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-6 group brand-logo-link">
           <img
             src={loginLogo}
             alt="Hospital Logo"
