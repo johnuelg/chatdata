@@ -94,7 +94,7 @@ const DomainsSection = () => {
           <Icon className={`${isLarge ? "w-9 h-9" : "w-7 h-7"}`} style={{ color: domain.color }} />
         </div>
         <div className="text-center">
-          <p className="font-heading font-bold text-sm">{domain.abbreviation}</p>
+          <p className="font-heading font-semibold text-sm tracking-tight">{domain.abbreviation}</p>
           <p className="text-[11px] text-muted-foreground leading-tight font-medium max-w-[100px]">
             {t("domain_cards", domain.abbreviation) || domain.name}
           </p>
