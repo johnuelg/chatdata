@@ -133,10 +133,10 @@ const Navbar = () => {
             />
           )}
           <div className="hidden sm:block leading-tight">
-            <span className="block font-heading font-bold text-sm md:text-base text-foreground">
+            <span className="block font-heading font-semibold text-sm md:text-base text-foreground tracking-tight">
               {lang === "ar" ? "مستشفى الطائف للأطفال" : "Taif Children's Hospital"}
             </span>
-            <span className="block text-[10px] md:text-xs text-muted-foreground">
+            <span className="block font-body text-[10px] md:text-xs text-muted-foreground font-medium">
               {lang === "ar" ? "منصة الذكاء الاصطناعي للبيانات" : "Conversational AI Data Platform"}
             </span>
           </div>
@@ -149,7 +149,7 @@ const Navbar = () => {
               key={link.en}
               type="button"
               onClick={() => scrollTo(link.href)}
-              className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors duration-300"
+              className="px-3 py-2 text-sm font-body font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors duration-300"
             >
               {lang === "ar" ? link.ar : link.en}
             </button>
@@ -157,7 +157,7 @@ const Navbar = () => {
           <div className="relative" ref={aiMenuRef}>
             <button
               onClick={() => setIsAIOpen(!isAIOpen)}
-              className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors duration-300 flex items-center gap-1"
+              className="px-3 py-2 text-sm font-body font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors duration-300 flex items-center gap-1"
             >
               {lang === "ar" ? "الذكاء الاصطناعي" : "AI"} <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isAIOpen ? "rotate-180" : ""}`} />
             </button>
@@ -171,7 +171,7 @@ const Navbar = () => {
                       scrollTo(item.href);
                       setIsAIOpen(false);
                     }}
-                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors duration-200"
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-body text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors duration-200"
                   >
                     <item.icon className="w-4 h-4" />
                     {lang === "ar" ? item.ar : item.en}
@@ -188,13 +188,13 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-1 bg-secondary/90 rounded-full p-1">
             <button
               onClick={() => setLang("en")}
-              className={`px-2 py-1 rounded-full text-[11px] font-bold transition-all duration-300 ${lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              className={`px-2 py-1 rounded-full text-[11px] font-body font-semibold transition-all duration-300 ${lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               EN
             </button>
             <button
               onClick={() => setLang("ar")}
-              className={`px-2 py-1 rounded-full text-[11px] font-bold transition-all duration-300 ${lang === "ar" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              className={`px-2 py-1 rounded-full text-[11px] font-body font-semibold transition-all duration-300 ${lang === "ar" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               AR
             </button>
@@ -267,7 +267,7 @@ const Navbar = () => {
               </button>
             ))}
             <div className="border-t border-border/50 pt-2 mt-1">
-              <span className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-widest px-3 mb-1 block">
+              <span className="text-[10px] font-body font-semibold text-muted-foreground/70 uppercase tracking-widest px-3 mb-1 block">
                 {lang === "ar" ? "ميزات الذكاء الاصطناعي" : "AI Features"}
               </span>
               {aiSubItems.map((item) => (
