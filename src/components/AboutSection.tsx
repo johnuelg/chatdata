@@ -1,5 +1,16 @@
 import { motion } from "framer-motion";
-import { AlertTriangle, Lightbulb, Clock, XCircle, TrendingDown, Database, MessageSquareText, CheckCircle2, Zap, LayoutDashboard } from "lucide-react";
+import {
+  AlertTriangle,
+  Zap,
+  Clock,
+  AlertCircle,
+  Timer,
+  Layers,
+  MessageSquare,
+  ShieldCheck,
+  TrendingUp,
+  Database,
+} from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const AboutSection = () => {
@@ -11,78 +22,93 @@ const AboutSection = () => {
     ? "تعمل منصة الذكاء الاصطناعي للمحادثة على تعزيز اتخاذ القرارات المبنية على البيانات في مستشفى الطائف للأطفال من خلال تحويل مؤشرات الأداء والبيانات التشغيلية إلى رؤى فورية وتقارير آلية."
     : "Our Conversational AI Data Platform strengthens data-driven decision-making at Taif Children's Hospital by transforming hospital KPIs and operational data into timely insights and automated reports.");
 
-  const challengeTitle = lang === "ar" ? "التحدي" : "The Challenge";
+  const challengeTitle = lang === "ar" ? "التحديات" : "Pain Points";
   const challengeDesc = lang === "ar"
     ? "إعداد التقارير اليدوية التقليدية يستغرق وقتاً طويلاً وعرضة للأخطاء ويخلق اختناقات تشغيلية عبر الأقسام."
     : "Traditional manual reporting is time-consuming, error-prone, and creates operational bottlenecks across departments.";
   const challengeItems = lang === "ar"
     ? [
         { icon: Clock, text: "ساعات من العمل اليدوي لكل تقرير" },
-        { icon: XCircle, text: "عرضة للأخطاء البشرية" },
-        { icon: TrendingDown, text: "تأخير في اتخاذ القرارات" },
-        { icon: Database, text: "بيانات متفرقة عبر الأقسام" },
+        { icon: AlertCircle, text: "عرضة للأخطاء البشرية" },
+        { icon: Timer, text: "تأخر في اتخاذ القرارات" },
+        { icon: Layers, text: "بيانات متفرقة عبر الأقسام" },
       ]
     : [
         { icon: Clock, text: "Hours of manual work per report" },
-        { icon: XCircle, text: "Prone to human errors" },
-        { icon: TrendingDown, text: "Delayed decision-making" },
+        { icon: AlertCircle, text: "Prone to human errors" },
+        { icon: Timer, text: "Delayed decision making" },
         { icon: Database, text: "Scattered data across departments" },
       ];
 
-  const solutionTitle = lang === "ar" ? "حلنا" : "Our Solution";
+  const solutionTitle = lang === "ar" ? "الحل" : "Solution";
   const solutionDesc = lang === "ar"
     ? "تحدث مع بياناتك ببساطة. اطرح أسئلة بلغة طبيعية للحصول على إجابات فورية وموثوقة وتقارير أداء آلية."
     : "Simply chat with your data. Ask questions in natural language to get instant, reliable answers and automated performance reports.";
   const solutionItems = lang === "ar"
     ? [
-        { icon: MessageSquareText, text: "تحدث لإنشاء تقارير أداء فورية" },
-        { icon: CheckCircle2, text: "دقة مدعومة بالذكاء الاصطناعي" },
-        { icon: Zap, text: "رؤى أداء في الوقت المناسب" },
-        { icon: LayoutDashboard, text: "جميع البيانات في مكان واحد" },
+        { icon: MessageSquare, text: "تحدث لإنشاء تقارير أداء فورية" },
+        { icon: ShieldCheck, text: "دقة مدعومة بالذكاء الاصطناعي يمكنك الوثوق بها" },
+        { icon: TrendingUp, text: "رؤى أداء في الوقت المناسب" },
+        { icon: Database, text: "جميع البيانات في مكان واحد. بدون عزل. بدون تكرار." },
       ]
     : [
-        { icon: MessageSquareText, text: "Chat to generate instant performance reports" },
-        { icon: CheckCircle2, text: "AI-driven accuracy you can trust" },
-        { icon: Zap, text: "Timely performance insights" },
-        { icon: LayoutDashboard, text: "All data in one place. No silos." },
+        { icon: MessageSquare, text: "Chat to generate instant performance reports" },
+        { icon: ShieldCheck, text: "AI-driven accuracy you can trust" },
+        { icon: TrendingUp, text: "Timely performance insights" },
+        { icon: Database, text: "All data in one place. No silos. No duplication." },
       ];
 
   return (
-    <section id="about" className="py-20 md:py-28 relative">
-      <div className="container mx-auto px-4 sm:px-6">
+    <section id="about" className="py-20 md:py-32 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-secondary/40 via-background to-primary/5" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-background/60" />
+
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-14 md:mb-20"
+          className="text-center mb-16"
         >
-          <span className="inline-block px-3 py-1 rounded-full bg-primary/8 text-primary text-xs font-bold uppercase tracking-widest mb-4">{sectionLabel}</span>
-          <h2 className="font-heading font-extrabold text-2xl sm:text-3xl md:text-4xl mb-5 tracking-tight">{heading}</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base leading-relaxed font-medium">
+          <span className="inline-block px-3 py-1 rounded-full bg-primary/8 text-primary text-xs font-bold uppercase tracking-widest mb-4">
+            {sectionLabel}
+          </span>
+          <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
+            {heading}
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-loose text-center">
             {description}
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-5 md:gap-6 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-stretch">
           {/* The Challenge */}
           <motion.div
             initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 md:p-8 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500 group"
+            className="group relative bg-card rounded-2xl p-8 lg:p-10 border border-destructive/20 shadow-[var(--card-shadow)] hover:shadow-[var(--card-hover-shadow)] hover:-translate-y-2 transition-all duration-500 flex flex-col overflow-hidden"
           >
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-11 h-11 rounded-xl bg-coral/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <AlertTriangle className="w-5 h-5 text-coral" />
+            <div className="absolute inset-0 bg-gradient-to-br from-destructive/5 via-transparent to-destructive/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 rounded-2xl border-2 border-destructive/0 group-hover:border-destructive/20 transition-all duration-500" />
+
+            <div className="relative z-10 flex items-center gap-3 mb-8">
+              <div className="w-12 h-12 rounded-xl bg-destructive/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-destructive/20 group-hover:rotate-3 transition-all duration-500">
+                <AlertTriangle className="h-6 w-6 text-destructive group-hover:scale-110 transition-transform duration-300" />
               </div>
-              <h3 className="font-heading font-bold text-lg md:text-xl">{challengeTitle}</h3>
+              <h3 className="font-heading text-xl md:text-2xl font-bold text-foreground group-hover:text-destructive transition-colors duration-300">
+                {challengeTitle}
+              </h3>
             </div>
-            <p className="text-muted-foreground text-sm leading-relaxed mb-6 font-medium">
+
+            <p className="relative z-10 text-muted-foreground leading-relaxed mb-8 text-left text-justify group-hover:text-foreground/80 transition-colors duration-300">
               {challengeDesc}
             </p>
-            <div className="space-y-3">
+
+            <div className="relative z-10 space-y-4 mt-auto">
               {challengeItems.map((item, i) => (
                 <motion.div
                   key={i}
@@ -90,9 +116,11 @@ const AboutSection = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08 }}
-                  className="flex items-center gap-3 text-sm text-muted-foreground font-medium"
+                  className="flex items-center gap-3 text-sm text-muted-foreground"
                 >
-                  <item.icon className="w-4 h-4 text-coral/70 shrink-0" />
+                  <div className="w-7 h-7 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
+                    <item.icon className="w-4 h-4 text-destructive" />
+                  </div>
                   {item.text}
                 </motion.div>
               ))}
@@ -105,18 +133,25 @@ const AboutSection = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl border border-primary/20 bg-card/80 backdrop-blur-sm p-6 md:p-8 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500 group"
+            className="group relative bg-card rounded-2xl p-8 lg:p-10 border border-primary/20 shadow-[var(--card-shadow)] hover:shadow-[var(--card-hover-shadow)] hover:-translate-y-2 transition-all duration-500 flex flex-col overflow-hidden"
           >
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <Lightbulb className="w-5 h-5 text-primary" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 rounded-2xl border-2 border-primary/0 group-hover:border-primary/20 transition-all duration-500" />
+
+            <div className="relative z-10 flex items-center gap-3 mb-8">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-primary/20 group-hover:rotate-3 transition-all duration-500">
+                <Zap className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
               </div>
-              <h3 className="font-heading font-bold text-lg md:text-xl">{solutionTitle}</h3>
+              <h3 className="font-heading text-xl md:text-2xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
+                {solutionTitle}
+              </h3>
             </div>
-            <p className="text-muted-foreground text-sm leading-relaxed mb-6 font-medium">
+
+            <p className="relative z-10 text-muted-foreground leading-relaxed mb-8 text-left text-justify group-hover:text-foreground/80 transition-colors duration-300">
               {solutionDesc}
             </p>
-            <div className="space-y-3">
+
+            <div className="relative z-10 space-y-4 mt-auto">
               {solutionItems.map((item, i) => (
                 <motion.div
                   key={i}
@@ -124,14 +159,17 @@ const AboutSection = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08 }}
-                  className="flex items-center gap-3 text-sm text-muted-foreground font-medium"
+                  className="flex items-center gap-3 text-sm text-foreground"
                 >
-                  <item.icon className="w-4 h-4 text-primary/70 shrink-0" />
+                  <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <item.icon className="w-4 h-4 text-primary" />
+                  </div>
                   {item.text}
                 </motion.div>
               ))}
             </div>
           </motion.div>
+        </div>
         </div>
       </div>
     </section>
