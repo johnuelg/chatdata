@@ -14,9 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['Nunito', 'system-ui', 'sans-serif'],
-        body: ['Open Sans', 'system-ui', 'sans-serif'],
-        arabic: ['Cairo', 'Open Sans', 'system-ui', 'sans-serif'],
+        heading: ['Nunito', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        body: ['Quicksand', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        arabic: ['Cairo', 'Quicksand', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
