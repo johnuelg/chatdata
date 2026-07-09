@@ -188,13 +188,13 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-1 bg-secondary/90 rounded-full p-1">
             <button
               onClick={() => setLang("en")}
-              className={`px-2 py-1 rounded-full text-[11px] font-bold transition-all duration-300 ${lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              className={`px-2 py-1 rounded-full text-[11px] font-body font-semibold transition-all duration-300 ${lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               EN
             </button>
             <button
               onClick={() => setLang("ar")}
-              className={`px-2 py-1 rounded-full text-[11px] font-bold transition-all duration-300 ${lang === "ar" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              className={`px-2 py-1 rounded-full text-[11px] font-body font-semibold transition-all duration-300 ${lang === "ar" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               AR
             </button>
@@ -267,7 +267,7 @@ const Navbar = () => {
               </button>
             ))}
             <div className="border-t border-border/50 pt-2 mt-1">
-              <span className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-widest px-3 mb-1 block">
+              <span className="text-[10px] font-body font-semibold text-muted-foreground/70 uppercase tracking-widest px-3 mb-1 block">
                 {lang === "ar" ? "ميزات الذكاء الاصطناعي" : "AI Features"}
               </span>
               {aiSubItems.map((item) => (

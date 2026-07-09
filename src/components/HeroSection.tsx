@@ -66,7 +66,7 @@ const renderHighlighted = (text: string, lang: string) => {
   const parts = text.split(pattern);
   return parts.map((part, i) =>
     phrases.includes(part) ? (
-      <strong key={i} className="font-bold text-primary">{part}</strong>
+      <strong key={i} className="font-semibold text-primary">{part}</strong>
     ) : (
       <span key={i}>{part}</span>
     )
