@@ -40,13 +40,13 @@ const AIFeaturesSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-14 md:mb-20"
         >
-          <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest mb-4">
+          <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-body font-semibold uppercase tracking-widest mb-4">
             {t("ai_features", "section_badge") || "Features"}
           </span>
-          <h2 className="font-heading font-extrabold text-3xl md:text-4xl lg:text-5xl mb-6 tracking-tight">
+          <h2 className="font-heading font-semibold text-3xl md:text-4xl lg:text-5xl mb-6 tracking-tight">
             {t("ai_features", "section_title") || "AI Features"}
           </h2>
-          <p className="text-muted-foreground max-w-3xl mx-auto text-base md:text-lg leading-loose font-body">
+          <p className="text-muted-foreground max-w-3xl mx-auto text-base md:text-lg leading-loose font-body font-medium">
             {t("ai_features", "section_description") || "We've got a new AI setup that's here to make life easier when it comes to tracking hospital KPIs."}
           </p>
         </motion.div>
@@ -66,10 +66,10 @@ const AIFeaturesSection = () => {
                 <div className={`w-14 h-14 rounded-2xl ${colorMap[feature.color]} flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}>
                   <feature.icon className="w-7 h-7" />
                 </div>
-                <h3 className="font-heading font-bold text-xl md:text-2xl mb-4 tracking-tight group-hover:text-primary transition-colors duration-300">
+                <h3 className="font-heading font-semibold text-xl md:text-2xl mb-4 tracking-tight group-hover:text-primary transition-colors duration-300">
                   {t("ai_features", feature.titleKey)}
                 </h3>
-                <p className="text-muted-foreground text-base leading-relaxed font-body group-hover:text-foreground/80 transition-colors duration-300">
+                <p className="text-muted-foreground text-base leading-relaxed font-body font-medium group-hover:text-foreground/80 transition-colors duration-300">
                   {t("ai_features", feature.descKey)}
                 </p>
               </div>

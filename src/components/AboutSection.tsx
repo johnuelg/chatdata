@@ -72,13 +72,13 @@ const AboutSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="inline-block px-3 py-1 rounded-full bg-primary/8 text-primary text-xs font-bold uppercase tracking-widest mb-4">
+          <span className="inline-block px-3 py-1 rounded-full bg-primary/8 text-primary text-xs font-body font-semibold uppercase tracking-widest mb-4">
             {sectionLabel}
           </span>
-          <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
+          <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground mb-8 tracking-tight">
             {heading}
           </h2>
-          <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-loose text-center">
+          <p className="font-body font-medium text-lg text-muted-foreground max-w-4xl mx-auto leading-loose text-center">
             {description}
           </p>
         </motion.div>
@@ -99,12 +99,12 @@ const AboutSection = () => {
               <div className="w-12 h-12 rounded-xl bg-destructive/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-destructive/20 group-hover:rotate-3 transition-all duration-500">
                 <AlertTriangle className="h-6 w-6 text-destructive group-hover:scale-110 transition-transform duration-300" />
               </div>
-              <h3 className="font-heading text-xl md:text-2xl font-bold text-foreground group-hover:text-destructive transition-colors duration-300">
+              <h3 className="font-heading text-xl md:text-2xl font-semibold text-foreground group-hover:text-destructive transition-colors duration-300 tracking-tight">
                 {challengeTitle}
               </h3>
             </div>
 
-            <p className="relative z-10 text-muted-foreground leading-relaxed mb-8 text-left text-justify group-hover:text-foreground/80 transition-colors duration-300">
+            <p className="relative z-10 font-body font-medium text-muted-foreground leading-relaxed mb-8 text-left text-justify group-hover:text-foreground/80 transition-colors duration-300">
               {challengeDesc}
             </p>
 
@@ -116,7 +116,7 @@ const AboutSection = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08 }}
-                  className="flex items-center gap-3 text-sm text-muted-foreground"
+                  className="flex items-center gap-3 text-sm font-body font-medium text-muted-foreground"
                 >
                   <div className="w-7 h-7 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
                     <item.icon className="w-4 h-4 text-destructive" />
@@ -142,12 +142,12 @@ const AboutSection = () => {
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-primary/20 group-hover:rotate-3 transition-all duration-500">
                 <Zap className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
               </div>
-              <h3 className="font-heading text-xl md:text-2xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
+              <h3 className="font-heading text-xl md:text-2xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300 tracking-tight">
                 {solutionTitle}
               </h3>
             </div>
 
-            <p className="relative z-10 text-muted-foreground leading-relaxed mb-8 text-left text-justify group-hover:text-foreground/80 transition-colors duration-300">
+            <p className="relative z-10 font-body font-medium text-muted-foreground leading-relaxed mb-8 text-left text-justify group-hover:text-foreground/80 transition-colors duration-300">
               {solutionDesc}
             </p>
 
@@ -159,7 +159,7 @@ const AboutSection = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08 }}
-                  className="flex items-center gap-3 text-sm text-foreground"
+                  className="flex items-center gap-3 text-sm font-body font-medium text-foreground"
                 >
                   <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <item.icon className="w-4 h-4 text-primary" />
