@@ -133,10 +133,10 @@ const Navbar = () => {
             />
           )}
           <div className="hidden sm:block leading-tight">
-            <span className="block font-heading font-bold text-sm md:text-base text-foreground">
+            <span className="block font-heading font-semibold text-sm md:text-base text-foreground tracking-tight">
               {lang === "ar" ? "مستشفى الطائف للأطفال" : "Taif Children's Hospital"}
             </span>
-            <span className="block text-[10px] md:text-xs text-muted-foreground">
+            <span className="block font-body text-[10px] md:text-xs text-muted-foreground font-medium">
               {lang === "ar" ? "منصة الذكاء الاصطناعي للبيانات" : "Conversational AI Data Platform"}
             </span>
           </div>
@@ -149,7 +149,7 @@ const Navbar = () => {
               key={link.en}
               type="button"
               onClick={() => scrollTo(link.href)}
-              className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors duration-300"
+              className="px-3 py-2 text-sm font-body font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors duration-300"
             >
               {lang === "ar" ? link.ar : link.en}
             </button>
@@ -157,7 +157,7 @@ const Navbar = () => {
           <div className="relative" ref={aiMenuRef}>
             <button
               onClick={() => setIsAIOpen(!isAIOpen)}
-              className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors duration-300 flex items-center gap-1"
+              className="px-3 py-2 text-sm font-body font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors duration-300 flex items-center gap-1"
             >
               {lang === "ar" ? "الذكاء الاصطناعي" : "AI"} <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isAIOpen ? "rotate-180" : ""}`} />
             </button>
@@ -171,7 +171,7 @@ const Navbar = () => {
                       scrollTo(item.href);
                       setIsAIOpen(false);
                     }}
-                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors duration-200"
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-body text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors duration-200"
                   >
                     <item.icon className="w-4 h-4" />
                     {lang === "ar" ? item.ar : item.en}
