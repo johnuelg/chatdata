@@ -22,10 +22,10 @@ const AboutSection = () => {
     ? "تعمل منصة الذكاء الاصطناعي للمحادثة على تعزيز اتخاذ القرارات المبنية على البيانات في مستشفى الطائف للأطفال من خلال تحويل مؤشرات الأداء والبيانات التشغيلية إلى رؤى فورية وتقارير آلية."
     : "Our Conversational AI Data Platform strengthens data-driven decision-making at Taif Children's Hospital by transforming hospital KPIs and operational data into timely insights and automated reports.");
 
-  const challengeTitle = lang === "ar" ? "التحديات" : "Pain Points";
+  const challengeTitle = lang === "ar" ? "التحديات" : "The Challenges";
   const challengeDesc = lang === "ar"
     ? "إعداد التقارير اليدوية التقليدية يستغرق وقتاً طويلاً وعرضة للأخطاء ويخلق اختناقات تشغيلية عبر الأقسام."
-    : "Traditional manual reporting is time-consuming, error-prone, and creates operational bottlenecks across departments.";
+    : "Traditional manual report is time-consuming, error-prone, and creates operational bottlenecks across departments. Staff time is spent compiling and checking data, and preparing reports—rather than reviewing performance, improving processes, and running operations efficiently.";
   const challengeItems = lang === "ar"
     ? [
         { icon: Clock, text: "ساعات من العمل اليدوي لكل تقرير" },
@@ -40,10 +40,10 @@ const AboutSection = () => {
         { icon: Database, text: "Scattered data across departments" },
       ];
 
-  const solutionTitle = lang === "ar" ? "الحل" : "Solution";
+  const solutionTitle = lang === "ar" ? "الحل" : "Our Solutions";
   const solutionDesc = lang === "ar"
     ? "تحدث مع بياناتك ببساطة. اطرح أسئلة بلغة طبيعية للحصول على إجابات فورية وموثوقة وتقارير أداء آلية."
-    : "Simply chat with your data. Ask questions in natural language to get instant, reliable answers and automated performance reports.";
+    : "Simply chat with your data. Ask questions in natural language to get instant, reliable answers and automated performance reports from hospital operational data. Our generative AI interprets workflows and KPIs to deliver actionable insights in seconds.";
   const solutionItems = lang === "ar"
     ? [
         { icon: MessageSquare, text: "تحدث لإنشاء تقارير أداء فورية" },
