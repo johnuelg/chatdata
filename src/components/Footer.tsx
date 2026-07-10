@@ -19,9 +19,9 @@ const Footer = () => {
           ) : (
             <img src="/images/hospital-logo.svg" alt="Taif Children's Hospital" className="brand-logo brand-logo-footer" />
           )}
-          <span className="font-heading font-semibold text-sm tracking-tight">{name}</span>
+          <span className="font-heading font-semibold text-sm">{name}</span>
         </button>
-        <p className="text-xs text-primary-foreground/75 text-center font-body font-medium">{copyright}</p>
+        <p className="text-xs text-primary-foreground/75 text-center font-medium">{copyright}</p>
       </div>
     </footer>
   );

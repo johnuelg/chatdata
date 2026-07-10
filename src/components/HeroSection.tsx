@@ -66,7 +66,7 @@ const renderHighlighted = (text: string, lang: string) => {
   const parts = text.split(pattern);
   return parts.map((part, i) =>
     phrases.includes(part) ? (
-      <strong key={i} className="font-semibold text-primary">{part}</strong>
+      <strong key={i} className="font-bold text-primary">{part}</strong>
     ) : (
       <span key={i}>{part}</span>
     )
@@ -174,7 +174,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="inline-flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-primary/20 bg-primary/10 text-primary text-[12px] sm:text-[13px] font-body font-semibold mb-10 backdrop-blur-sm tracking-[0.01em] shadow-sm"
+          className="inline-flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-primary/20 bg-primary/10 text-primary text-[12px] sm:text-[13px] font-semibold mb-10 backdrop-blur-sm tracking-[0.01em] shadow-sm"
         >
           <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/15">
             <Bot className="w-3 h-3" strokeWidth={2.5} />
@@ -187,7 +187,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-          className="font-heading font-semibold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.05] mb-8 tracking-tight text-balance"
+          className="font-heading font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.05] mb-8 tracking-tight text-balance"
         >
           {titleLine1}
           <br />
@@ -201,7 +201,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-          className="max-w-3xl mx-auto text-muted-foreground text-base sm:text-lg md:text-xl mb-10 leading-[1.7] font-body font-medium text-pretty"
+          className="max-w-3xl mx-auto text-muted-foreground text-base sm:text-lg md:text-xl mb-10 leading-[1.7] font-body text-pretty"
         >
           {renderHighlighted(description, lang)}
         </motion.p>
@@ -213,10 +213,10 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
           className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-16"
         >
-          <Button variant="hero" size="lg" className="rounded-xl px-8 gap-2 w-full sm:w-auto shadow-elegant hover:shadow-glow transition-all duration-300 hover:scale-[1.02] text-[15px] font-body font-semibold">
+          <Button variant="hero" size="lg" className="rounded-xl px-8 gap-2 w-full sm:w-auto shadow-elegant hover:shadow-glow transition-all duration-300 hover:scale-[1.02] text-[15px] font-semibold">
             {ctaPrimary} <ArrowRight className="w-4 h-4" />
           </Button>
-          <Button variant="hero-outline" size="lg" className="rounded-xl px-8 w-full sm:w-auto hover:scale-[1.02] transition-all duration-300 text-[15px] font-body font-semibold">
+          <Button variant="hero-outline" size="lg" className="rounded-xl px-8 w-full sm:w-auto hover:scale-[1.02] transition-all duration-300 text-[15px] font-semibold">
             {ctaSecondary}
           </Button>
         </motion.div>

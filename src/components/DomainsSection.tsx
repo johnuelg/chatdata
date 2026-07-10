@@ -94,7 +94,7 @@ const DomainsSection = () => {
           <Icon className={`${isLarge ? "w-9 h-9" : "w-7 h-7"}`} style={{ color: domain.color }} />
         </div>
         <div className="text-center">
-          <p className="font-heading font-semibold text-sm tracking-tight">{domain.abbreviation}</p>
+          <p className="font-heading font-bold text-sm">{domain.abbreviation}</p>
           <p className="text-[11px] text-muted-foreground leading-tight font-medium max-w-[100px]">
             {t("domain_cards", domain.abbreviation) || domain.name}
           </p>
@@ -117,13 +117,13 @@ const DomainsSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 md:mb-16"
         >
-          <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-body font-semibold uppercase tracking-widest mb-4">
+          <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest mb-4">
             {t("domains", "section_badge") || "Domains"}
           </span>
-          <h2 className="font-heading font-semibold text-2xl sm:text-3xl md:text-4xl mb-2 tracking-tight">
+          <h2 className="font-heading font-extrabold text-2xl sm:text-3xl md:text-4xl mb-2 tracking-tight">
             {t("domains", "section_title") || "Hospital Domains"}
           </h2>
-          <p className="text-muted-foreground text-sm sm:text-base font-body font-medium">
+          <p className="text-muted-foreground text-sm sm:text-base font-medium">
             {t("domains", "section_description") || "Empowering every clinical service"}
           </p>
         </motion.div>
