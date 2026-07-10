@@ -220,19 +220,42 @@ const Navbar = () => {
             </Button>
           )}
           {user ? (
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-full px-4 text-xs font-semibold border-border/70 hover:bg-secondary/70"
-              onClick={goToAssignedDashboard}
-              disabled={navPathLoading}
-            >
-              <span className="inline-flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
-                <span className="text-muted-foreground">{lang === "ar" ? "متصل:" : "Signed in:"}</span>
-                <span className="text-foreground">{signedInName}</span>
-              </span>
-            </Button>
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-full px-4 text-xs font-semibold border-border/70 hover:bg-secondary/70"
+                onClick={goToAssignedDashboard}
+                disabled={navPathLoading}
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+                  <span className="text-muted-foreground">{lang === "ar" ? "متصل:" : "Signed in:"}</span>
+                  <span className="text-foreground">{signedInName}</span>
+                </span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hidden md:inline-flex rounded-full px-3 text-xs font-semibold hover:bg-primary/10 hover:text-primary"
+                onClick={() => void signOut()}
+                aria-label={lang === "ar" ? "تسجيل الخروج" : "Logout"}
+              >
+                <LogOut className="w-3.5 h-3.5 mr-1" />
+                {lang === "ar" ? "خروج" : "Logout"}
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden h-8 w-8 hover:bg-primary/10 hover:text-primary"
+                onClick={() => void signOut()}
+                aria-label={lang === "ar" ? "تسجيل الخروج" : "Logout"}
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
+            </>
           ) : (
             <Button
               variant="hero"
