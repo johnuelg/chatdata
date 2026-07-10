@@ -113,7 +113,7 @@ const HeroSection = () => {
   const line2After = line2Parts[1] || "";
 
   return (
-    <section id="home" className="relative min-h-screen flex flex-col items-center justify-center pt-20 overflow-hidden gradient-hero">
+    <section id="home" className="relative min-h-screen flex flex-col items-center justify-center pt-28 sm:pt-32 md:pt-36 overflow-hidden gradient-hero">
       {/* Soft blue radial gradient backdrop */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -174,7 +174,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="inline-flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-primary/20 bg-primary/10 text-primary text-[12px] sm:text-[13px] font-semibold mb-10 backdrop-blur-sm tracking-[0.01em] shadow-sm"
+          className="inline-flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-primary/20 bg-primary/10 text-primary text-[12px] sm:text-[13px] font-semibold mt-2 sm:mt-3 mb-10 backdrop-blur-sm tracking-[0.01em] shadow-sm"
         >
           <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/15">
             <Bot className="w-3 h-3" strokeWidth={2.5} />
