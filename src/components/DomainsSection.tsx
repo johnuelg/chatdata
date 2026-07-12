@@ -84,21 +84,21 @@ const DomainsSection = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.05, duration: 0.4 }}
         whileHover={{ y: -5 }}
-        className="group w-[230px] sm:w-[248px] md:w-[260px] shrink-0 snap-center"
+        className="group w-[188px] sm:w-[204px] md:w-[216px] shrink-0 snap-center"
       >
-        <div className="h-[244px] rounded-3xl border border-border/70 bg-card/95 shadow-[0_14px_30px_-18px_hsl(var(--foreground)/0.22)] backdrop-blur-sm transition-all duration-300 group-hover:shadow-[0_18px_36px_-18px_hsl(var(--foreground)/0.28)] group-hover:border-border">
-          <div className="h-full flex flex-col items-center justify-center px-6 text-center">
+        <div className="h-[206px] rounded-[1.25rem] border border-border/70 bg-card/95 shadow-[0_14px_30px_-18px_hsl(var(--foreground)/0.22)] backdrop-blur-sm transition-all duration-300 group-hover:shadow-[0_18px_36px_-18px_hsl(var(--foreground)/0.28)] group-hover:border-border">
+          <div className="h-full flex flex-col items-center justify-center px-4 text-center">
             <div
-              className="w-[78px] h-[78px] rounded-3xl border border-border/60 flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
+              className="w-[64px] h-[64px] rounded-2xl border border-border/60 flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
               style={{ backgroundColor: `${domain.color}14` }}
             >
-              <Icon className="w-9 h-9" style={{ color: domain.color }} />
+              <Icon className="w-7 h-7" style={{ color: domain.color }} />
             </div>
 
-            <p className="mt-6 font-heading font-bold text-3xl md:text-[2.05rem] leading-none tracking-tight text-foreground">
+            <p className="mt-4 font-heading font-bold text-2xl md:text-[1.7rem] leading-none tracking-tight text-foreground">
               {domain.abbreviation}
             </p>
-            <p className="mt-3 text-[1.05rem] leading-[1.35] text-muted-foreground font-medium min-h-[72px] max-w-[200px]">
+            <p className="mt-2 text-[0.95rem] leading-[1.3] text-muted-foreground font-medium min-h-[52px] max-w-[170px]">
               {t("domain_cards", domain.abbreviation) || domain.name}
             </p>
           </div>
@@ -137,15 +137,15 @@ const DomainsSection = () => {
             onClick={() => scrollToIndex(activeIndex - 1)}
             disabled={activeIndex === 0}
             aria-label="Previous domain"
-            className="absolute left-0 md:left-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-2xl border border-border/70 bg-card/95 shadow-[0_10px_24px_-16px_hsl(var(--foreground)/0.4)] flex items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground disabled:opacity-35 disabled:cursor-not-allowed"
+            className="absolute left-0 md:left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-xl border border-border/70 bg-card/95 shadow-[0_10px_24px_-16px_hsl(var(--foreground)/0.4)] flex items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground disabled:opacity-35 disabled:cursor-not-allowed"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
 
           <div
             ref={carouselRef}
             onScroll={onTrackScroll}
-            className="flex gap-5 md:gap-7 overflow-x-auto scroll-smooth snap-x snap-mandatory px-14 md:px-[72px] py-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            className="flex gap-4 md:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory px-12 md:px-16 py-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           >
             {domains.map((domain, i) => (
               <div
@@ -163,9 +163,9 @@ const DomainsSection = () => {
             onClick={() => scrollToIndex(activeIndex + 1)}
             disabled={activeIndex >= domains.length - 1}
             aria-label="Next domain"
-            className="absolute right-0 md:right-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-2xl border border-border/70 bg-card/95 shadow-[0_10px_24px_-16px_hsl(var(--foreground)/0.4)] flex items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground disabled:opacity-35 disabled:cursor-not-allowed"
+            className="absolute right-0 md:right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-xl border border-border/70 bg-card/95 shadow-[0_10px_24px_-16px_hsl(var(--foreground)/0.4)] flex items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground disabled:opacity-35 disabled:cursor-not-allowed"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4" />
           </button>
 
           <div className="flex justify-center items-center gap-2 mt-6">
