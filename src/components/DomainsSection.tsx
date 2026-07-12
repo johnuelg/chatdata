@@ -1,6 +1,6 @@
-import { useState, useCallback, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Activity } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useDomains } from "@/hooks/useDomains";
 import { getIconComponent } from "@/components/admin/settings/DomainIconPicker";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -17,36 +17,6 @@ const fallbackDomains = [
   { abbreviation: "HQI", name: "Health Quality Index", color: "#54b3d9", icon: "award" },
 ];
 
-const useSwipe = (onSwipeLeft: () => void, onSwipeRight: () => void, threshold = 50) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const startX = useRef(0);
-  const startY = useRef(0);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const onTouchStart = (e: TouchEvent) => {
-      startX.current = e.touches[0].clientX;
-      startY.current = e.touches[0].clientY;
-    };
-    const onTouchEnd = (e: TouchEvent) => {
-      const dx = e.changedTouches[0].clientX - startX.current;
-      const dy = e.changedTouches[0].clientY - startY.current;
-      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > threshold) {
-        dx < 0 ? onSwipeLeft() : onSwipeRight();
-      }
-    };
-    el.addEventListener("touchstart", onTouchStart, { passive: true });
-    el.addEventListener("touchend", onTouchEnd, { passive: true });
-    return () => {
-      el.removeEventListener("touchstart", onTouchStart);
-      el.removeEventListener("touchend", onTouchEnd);
-    };
-  }, [onSwipeLeft, onSwipeRight, threshold]);
-
-  return ref;
-};
-
 const DomainsSection = () => {
   const { data: dbDomains } = useDomains();
   const { t } = useLanguage();
@@ -54,57 +24,92 @@ const DomainsSection = () => {
     ? dbDomains.map(d => ({ abbreviation: d.abbreviation, name: d.name, color: d.color, icon: d.icon || "activity" }))
     : fallbackDomains;
 
-  const itemsPerMobilePage = 3;
-  const totalMobilePages = Math.ceil(domains.length / itemsPerMobilePage);
-  const [mobilePage, setMobilePage] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const rafRef = useRef<number | null>(null);
 
-  const itemsPerDesktopPage = 5;
-  const totalDesktopPages = Math.ceil(domains.length / itemsPerDesktopPage);
-  const [desktopPage, setDesktopPage] = useState(0);
+  useEffect(() => {
+    setActiveIndex(0);
+    cardRefs.current = [];
+  }, [domains.length]);
 
-  const mobileItems = domains.slice(mobilePage * itemsPerMobilePage, (mobilePage + 1) * itemsPerMobilePage);
-  const desktopItems = domains.slice(desktopPage * itemsPerDesktopPage, (desktopPage + 1) * itemsPerDesktopPage);
+  const scrollToIndex = (index: number) => {
+    if (!domains.length) return;
+    const bounded = Math.max(0, Math.min(domains.length - 1, index));
+    cardRefs.current[bounded]?.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+    setActiveIndex(bounded);
+  };
 
-  const mobileSwipeRef = useSwipe(
-    useCallback(() => setMobilePage(p => Math.min(totalMobilePages - 1, p + 1)), [totalMobilePages]),
-    useCallback(() => setMobilePage(p => Math.max(0, p - 1)), [])
-  );
+  const onTrackScroll = () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const track = carouselRef.current;
+      if (!track || cardRefs.current.length === 0) return;
 
-  const desktopSwipeRef = useSwipe(
-    useCallback(() => setDesktopPage(p => Math.min(totalDesktopPages - 1, p + 1)), [totalDesktopPages]),
-    useCallback(() => setDesktopPage(p => Math.max(0, p - 1)), [])
-  );
+      const viewportCenter = track.scrollLeft + track.clientWidth / 2;
+      let closestIndex = 0;
+      let smallestDistance = Number.POSITIVE_INFINITY;
 
+      cardRefs.current.forEach((card, index) => {
+        if (!card) return;
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const distance = Math.abs(cardCenter - viewportCenter);
+        if (distance < smallestDistance) {
+          smallestDistance = distance;
+          closestIndex = index;
+        }
+      });
 
-  const DomainCard = ({ domain, index, size = "normal" }: { domain: typeof domains[0]; index: number; size?: "normal" | "large" }) => {
+      setActiveIndex((prev) => (prev === closestIndex ? prev : closestIndex));
+    });
+  };
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
+  const DomainCard = ({ domain, index }: { domain: typeof domains[0]; index: number }) => {
     const Icon = getIconComponent(domain.icon);
-    const isLarge = size === "large";
+
     return (
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -16 }}
-        transition={{ delay: index * 0.06, duration: 0.35 }}
-        className="flex flex-col items-center gap-2.5 group cursor-pointer"
+        transition={{ delay: index * 0.05, duration: 0.4 }}
+        whileHover={{ y: -5 }}
+        className="group w-[230px] sm:w-[248px] md:w-[260px] shrink-0 snap-center"
       >
-        <div
-          className={`${isLarge ? "w-20 h-20" : "w-16 h-16"} rounded-2xl border border-primary/20 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg transition-all duration-300`}
-          style={{ backgroundColor: `${domain.color}15` }}
-        >
-          <Icon className={`${isLarge ? "w-9 h-9" : "w-7 h-7"}`} style={{ color: domain.color }} />
-        </div>
-        <div className="text-center">
-          <p className="font-heading font-bold text-sm">{domain.abbreviation}</p>
-          <p className="text-[11px] text-muted-foreground leading-tight font-medium max-w-[100px]">
-            {t("domain_cards", domain.abbreviation) || domain.name}
-          </p>
+        <div className="h-[244px] rounded-3xl border border-border/70 bg-card/95 shadow-[0_14px_30px_-18px_hsl(var(--foreground)/0.22)] backdrop-blur-sm transition-all duration-300 group-hover:shadow-[0_18px_36px_-18px_hsl(var(--foreground)/0.28)] group-hover:border-border">
+          <div className="h-full flex flex-col items-center justify-center px-6 text-center">
+            <div
+              className="w-[78px] h-[78px] rounded-3xl border border-border/60 flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
+              style={{ backgroundColor: `${domain.color}14` }}
+            >
+              <Icon className="w-9 h-9" style={{ color: domain.color }} />
+            </div>
+
+            <p className="mt-6 font-heading font-bold text-[34px] leading-none tracking-tight text-foreground">
+              {domain.abbreviation}
+            </p>
+            <p className="mt-3 text-[30px] leading-[1.25] text-muted-foreground font-medium min-h-[74px] max-w-[200px]">
+              {t("domain_cards", domain.abbreviation) || domain.name}
+            </p>
+          </div>
         </div>
       </motion.div>
     );
   };
 
   return (
-    <section id="domains" className="py-16 md:py-24 relative">
+    <section id="domains" className="py-16 md:py-24 relative bg-background">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
       </div>
@@ -120,108 +125,63 @@ const DomainsSection = () => {
           <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest mb-4">
             {t("domains", "section_badge") || "Domains"}
           </span>
-          <h2 className="font-heading font-extrabold text-2xl sm:text-3xl md:text-4xl mb-2 tracking-tight">
+          <h2 className="font-heading font-extrabold text-3xl sm:text-4xl md:text-6xl mb-3 tracking-tight text-foreground">
             {t("domains", "section_title") || "Hospital Domains"}
           </h2>
-          <p className="text-muted-foreground text-sm sm:text-base font-medium">
+          <p className="text-muted-foreground text-xl sm:text-2xl font-medium">
             {t("domains", "section_description") || "Empowering every clinical service"}
           </p>
         </motion.div>
 
-        <div className="block md:hidden">
-          <div ref={mobileSwipeRef} className="min-h-[140px] touch-pan-y">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={mobilePage}
-                className="flex justify-center gap-6"
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -40 }}
-                transition={{ duration: 0.3 }}
+        <div className="relative">
+          <button
+            onClick={() => scrollToIndex(activeIndex - 1)}
+            disabled={activeIndex === 0}
+            aria-label="Previous domain"
+            className="absolute left-0 md:left-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-2xl border border-border/70 bg-card/95 shadow-[0_10px_24px_-16px_hsl(var(--foreground)/0.4)] flex items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground disabled:opacity-35 disabled:cursor-not-allowed"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          <div
+            ref={carouselRef}
+            onScroll={onTrackScroll}
+            className="flex gap-5 md:gap-7 overflow-x-auto scroll-smooth snap-x snap-mandatory px-14 md:px-[72px] py-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {domains.map((domain, i) => (
+              <div
+                key={domain.abbreviation}
+                ref={(el) => {
+                  cardRefs.current[i] = el;
+                }}
               >
-                {mobileItems.map((domain, i) => (
-                  <DomainCard key={domain.abbreviation} domain={domain} index={i} />
-                ))}
-              </motion.div>
-            </AnimatePresence>
+                <DomainCard domain={domain} index={i} />
+              </div>
+            ))}
           </div>
 
-          {/* Dot indicators + arrows */}
-          <div className="flex items-center justify-center gap-3 mt-6">
-            <button
-              onClick={() => setMobilePage(p => Math.max(0, p - 1))}
-              disabled={mobilePage === 0}
-              className="w-8 h-8 rounded-full border border-border/50 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors disabled:opacity-30"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <div className="flex gap-1.5">
-              {Array.from({ length: totalMobilePages }).map((_, i) => (
+          <button
+            onClick={() => scrollToIndex(activeIndex + 1)}
+            disabled={activeIndex >= domains.length - 1}
+            aria-label="Next domain"
+            className="absolute right-0 md:right-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-2xl border border-border/70 bg-card/95 shadow-[0_10px_24px_-16px_hsl(var(--foreground)/0.4)] flex items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground disabled:opacity-35 disabled:cursor-not-allowed"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+
+          <div className="flex justify-center items-center gap-2 mt-6">
+            {domains.map((domain, i) => {
+              const isActive = i === activeIndex;
+              return (
                 <button
-                  key={i}
-                  onClick={() => setMobilePage(i)}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${i === mobilePage ? "w-6 bg-primary" : "w-1.5 bg-muted-foreground/30"}`}
+                  key={`${domain.abbreviation}-${i}`}
+                  onClick={() => scrollToIndex(i)}
+                  aria-label={`Go to ${domain.name}`}
+                  className={`h-2 rounded-full transition-all duration-300 ${isActive ? "w-9 bg-primary" : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/45"}`}
                 />
-              ))}
-            </div>
-            <button
-              onClick={() => setMobilePage(p => Math.min(totalMobilePages - 1, p + 1))}
-              disabled={mobilePage >= totalMobilePages - 1}
-              className="w-8 h-8 rounded-full border border-border/50 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors disabled:opacity-30"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
+              );
+            })}
           </div>
-        </div>
-
-        <div className="hidden md:block">
-          <div ref={desktopSwipeRef} className="flex items-center justify-center gap-6">
-            <button
-              onClick={() => setDesktopPage(p => Math.max(0, p - 1))}
-              disabled={desktopPage === 0}
-              className="w-10 h-10 rounded-full border border-border/50 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 hover:bg-primary/5 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-
-            <div className="min-h-[160px] flex items-start">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={desktopPage}
-                  className="flex gap-10 justify-center"
-                  initial={{ opacity: 0, x: 60 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -60 }}
-                  transition={{ duration: 0.35 }}
-                >
-                  {desktopItems.map((domain, i) => (
-                    <DomainCard key={domain.abbreviation} domain={domain} index={i} size="large" />
-                  ))}
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            <button
-              onClick={() => setDesktopPage(p => Math.min(totalDesktopPages - 1, p + 1))}
-              disabled={desktopPage >= totalDesktopPages - 1}
-              className="w-10 h-10 rounded-full border border-border/50 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 hover:bg-primary/5 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* Desktop dots */}
-          {totalDesktopPages > 1 && (
-            <div className="flex justify-center gap-2 mt-6">
-              {Array.from({ length: totalDesktopPages }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setDesktopPage(i)}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${i === desktopPage ? "w-8 bg-primary" : "w-1.5 bg-muted-foreground/30"}`}
-                />
-              ))}
-            </div>
-          )}
         </div>
       </div>
     </section>
