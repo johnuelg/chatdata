@@ -82,7 +82,6 @@ const DomainsSection = () => {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -16 }}
         transition={{ delay: index * 0.05, duration: 0.4 }}
         whileHover={{ y: -5 }}
         className="group w-[230px] sm:w-[248px] md:w-[260px] shrink-0 snap-center"
