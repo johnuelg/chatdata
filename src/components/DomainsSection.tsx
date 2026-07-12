@@ -96,10 +96,10 @@ const DomainsSection = () => {
               <Icon className="w-9 h-9" style={{ color: domain.color }} />
             </div>
 
-            <p className="mt-6 font-heading font-bold text-[34px] leading-none tracking-tight text-foreground">
+            <p className="mt-6 font-heading font-bold text-3xl md:text-[2.05rem] leading-none tracking-tight text-foreground">
               {domain.abbreviation}
             </p>
-            <p className="mt-3 text-[30px] leading-[1.25] text-muted-foreground font-medium min-h-[74px] max-w-[200px]">
+            <p className="mt-3 text-[1.05rem] leading-[1.35] text-muted-foreground font-medium min-h-[72px] max-w-[200px]">
               {t("domain_cards", domain.abbreviation) || domain.name}
             </p>
           </div>
