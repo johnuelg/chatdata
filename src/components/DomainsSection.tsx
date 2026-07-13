@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useDomains } from "@/hooks/useDomains";
@@ -29,45 +29,69 @@ const DomainsSection = () => {
   const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
   const rafRef = useRef<number | null>(null);
 
+  const getClosestIndex = useCallback((scrollLeft: number) => {
+    let closestIndex = 0;
+    let smallestDistance = Number.POSITIVE_INFINITY;
+
+    cardRefs.current.forEach((card, index) => {
+      if (!card) return;
+      const distance = Math.abs(card.offsetLeft - scrollLeft);
+      if (distance < smallestDistance) {
+        smallestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    return closestIndex;
+  }, []);
+
   useEffect(() => {
     setActiveIndex(0);
     cardRefs.current = [];
   }, [domains.length]);
 
-  const scrollToIndex = (index: number) => {
+  const scrollToIndex = useCallback((index: number) => {
     if (!domains.length) return;
-    const bounded = Math.max(0, Math.min(domains.length - 1, index));
-    cardRefs.current[bounded]?.scrollIntoView({
-      behavior: "smooth",
-      inline: "center",
-      block: "nearest",
-    });
-    setActiveIndex(bounded);
-  };
 
-  const onTrackScroll = () => {
+    const bounded = Math.max(0, Math.min(domains.length - 1, index));
+    const track = carouselRef.current;
+    const targetCard = cardRefs.current[bounded];
+
+    if (!track || !targetCard) return;
+
+    track.scrollTo({
+      left: targetCard.offsetLeft,
+      behavior: "smooth",
+    });
+
+    setActiveIndex(bounded);
+  }, [domains.length]);
+
+  const onTrackScroll = useCallback(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
     rafRef.current = requestAnimationFrame(() => {
       const track = carouselRef.current;
       if (!track || cardRefs.current.length === 0) return;
 
-      const viewportCenter = track.scrollLeft + track.clientWidth / 2;
-      let closestIndex = 0;
-      let smallestDistance = Number.POSITIVE_INFINITY;
-
-      cardRefs.current.forEach((card, index) => {
-        if (!card) return;
-        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-        const distance = Math.abs(cardCenter - viewportCenter);
-        if (distance < smallestDistance) {
-          smallestDistance = distance;
-          closestIndex = index;
-        }
-      });
+      const closestIndex = getClosestIndex(track.scrollLeft);
 
       setActiveIndex((prev) => (prev === closestIndex ? prev : closestIndex));
     });
-  };
+  }, [getClosestIndex]);
+
+  useEffect(() => {
+    const track = carouselRef.current;
+    if (!track) return;
+
+    const onResize = () => {
+      const closestIndex = getClosestIndex(track.scrollLeft);
+      setActiveIndex((prev) => (prev === closestIndex ? prev : closestIndex));
+    };
+
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [getClosestIndex]);
 
   useEffect(() => {
     return () => {
@@ -83,22 +107,22 @@ const DomainsSection = () => {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.05, duration: 0.4 }}
-        whileHover={{ y: -5 }}
-        className="group w-[188px] sm:w-[204px] md:w-[216px] shrink-0 snap-center"
+        whileHover={{ y: -4 }}
+        className="group w-[174px] sm:w-[188px] md:w-[198px] shrink-0 snap-start"
       >
-        <div className="h-[206px] rounded-[1.25rem] border border-border/70 bg-card/95 shadow-[0_14px_30px_-18px_hsl(var(--foreground)/0.22)] backdrop-blur-sm transition-all duration-300 group-hover:shadow-[0_18px_36px_-18px_hsl(var(--foreground)/0.28)] group-hover:border-border">
+        <div className="h-[188px] rounded-[1.1rem] border border-border/70 bg-card/95 shadow-[0_12px_24px_-16px_hsl(var(--foreground)/0.2)] backdrop-blur-sm transition-all duration-300 group-hover:shadow-[0_16px_30px_-18px_hsl(var(--foreground)/0.24)] group-hover:border-border">
           <div className="h-full flex flex-col items-center justify-center px-4 text-center">
             <div
-              className="w-[64px] h-[64px] rounded-2xl border border-border/60 flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
+              className="w-[56px] h-[56px] rounded-[1rem] border border-border/60 flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
               style={{ backgroundColor: `${domain.color}14` }}
             >
-              <Icon className="w-7 h-7" style={{ color: domain.color }} />
+              <Icon className="w-6 h-6" style={{ color: domain.color }} />
             </div>
 
-            <p className="mt-4 font-heading font-bold text-2xl md:text-[1.7rem] leading-none tracking-tight text-foreground">
+            <p className="mt-3.5 font-heading font-extrabold text-[1.45rem] md:text-[1.55rem] leading-none tracking-tight text-foreground">
               {domain.abbreviation}
             </p>
-            <p className="mt-2 text-[0.95rem] leading-[1.3] text-muted-foreground font-medium min-h-[52px] max-w-[170px]">
+            <p className="mt-1.5 text-[0.86rem] leading-[1.25] text-muted-foreground font-medium min-h-[42px] max-w-[154px]">
               {t("domain_cards", domain.abbreviation) || domain.name}
             </p>
           </div>
@@ -137,7 +161,7 @@ const DomainsSection = () => {
             onClick={() => scrollToIndex(activeIndex - 1)}
             disabled={activeIndex === 0}
             aria-label="Previous domain"
-            className="absolute left-0 md:left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-xl border border-border/70 bg-card/95 shadow-[0_10px_24px_-16px_hsl(var(--foreground)/0.4)] flex items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground disabled:opacity-35 disabled:cursor-not-allowed"
+            className="absolute left-0 md:left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-lg border border-border/70 bg-card/95 shadow-[0_10px_24px_-16px_hsl(var(--foreground)/0.35)] flex items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground disabled:opacity-35 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -145,11 +169,13 @@ const DomainsSection = () => {
           <div
             ref={carouselRef}
             onScroll={onTrackScroll}
-            className="flex gap-4 md:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory px-12 md:px-16 py-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            className="flex gap-3.5 md:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory px-11 md:px-14 py-2 touch-pan-x overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            style={{ scrollPaddingInline: "2.75rem" }}
           >
             {domains.map((domain, i) => (
               <div
                 key={domain.abbreviation}
+                className="shrink-0 snap-start"
                 ref={(el) => {
                   cardRefs.current[i] = el;
                 }}
@@ -163,7 +189,7 @@ const DomainsSection = () => {
             onClick={() => scrollToIndex(activeIndex + 1)}
             disabled={activeIndex >= domains.length - 1}
             aria-label="Next domain"
-            className="absolute right-0 md:right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-xl border border-border/70 bg-card/95 shadow-[0_10px_24px_-16px_hsl(var(--foreground)/0.4)] flex items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground disabled:opacity-35 disabled:cursor-not-allowed"
+            className="absolute right-0 md:right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-lg border border-border/70 bg-card/95 shadow-[0_10px_24px_-16px_hsl(var(--foreground)/0.35)] flex items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground disabled:opacity-35 disabled:cursor-not-allowed"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
