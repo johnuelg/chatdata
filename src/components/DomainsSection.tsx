@@ -19,15 +19,19 @@ const fallbackDomains = [
 
 const DomainsSection = () => {
   const { data: dbDomains } = useDomains();
-  const { t } = useLanguage();
+  const { t, isRtl } = useLanguage();
   const domains = dbDomains && dbDomains.length > 0
     ? dbDomains.map(d => ({ abbreviation: d.abbreviation, name: d.name, color: d.color, icon: d.icon || "activity" }))
     : fallbackDomains;
 
   const [activeIndex, setActiveIndex] = useState(0);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
   const carouselRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
   const rafRef = useRef<number | null>(null);
+  const snapTimerRef = useRef<number | null>(null);
+  const stepRef = useRef(280);
 
   const getClosestIndex = useCallback((scrollLeft: number) => {
     let closestIndex = 0;
@@ -50,6 +54,34 @@ const DomainsSection = () => {
     cardRefs.current = [];
   }, [domains.length]);
 
+  const updateScrollState = useCallback(() => {
+    const track = carouselRef.current;
+    if (!track) return;
+
+    const maxScroll = track.scrollWidth - track.clientWidth;
+    const current = Math.max(0, Math.min(track.scrollLeft, maxScroll));
+    const edge = 6;
+    setCanScrollLeft(current > edge);
+    setCanScrollRight(current < maxScroll - edge);
+  }, []);
+
+  const snapToNearestCard = useCallback(() => {
+    const track = carouselRef.current;
+    if (!track || cardRefs.current.length === 0) return;
+
+    const index = getClosestIndex(track.scrollLeft);
+    const target = cardRefs.current[index];
+    if (!target) return;
+
+    track.scrollTo({
+      left: target.offsetLeft,
+      behavior: "smooth",
+    });
+
+    setActiveIndex(index);
+    updateScrollState();
+  }, [getClosestIndex, updateScrollState]);
+
   const scrollToIndex = useCallback((index: number) => {
     if (!domains.length) return;
 
@@ -65,10 +97,27 @@ const DomainsSection = () => {
     });
 
     setActiveIndex(bounded);
-  }, [domains.length]);
+    updateScrollState();
+  }, [domains.length, updateScrollState]);
+
+  const scrollByStep = useCallback((direction: "left" | "right") => {
+    const track = carouselRef.current;
+    if (!track) return;
+
+    const effectiveDirection = isRtl
+      ? (direction === "left" ? "right" : "left")
+      : direction;
+    const delta = effectiveDirection === "left" ? -stepRef.current : stepRef.current;
+
+    track.scrollTo({
+      left: track.scrollLeft + delta,
+      behavior: "smooth",
+    });
+  }, [isRtl]);
 
   const onTrackScroll = useCallback(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    if (snapTimerRef.current) window.clearTimeout(snapTimerRef.current);
 
     rafRef.current = requestAnimationFrame(() => {
       const track = carouselRef.current;
@@ -77,25 +126,43 @@ const DomainsSection = () => {
       const closestIndex = getClosestIndex(track.scrollLeft);
 
       setActiveIndex((prev) => (prev === closestIndex ? prev : closestIndex));
+      updateScrollState();
     });
-  }, [getClosestIndex]);
+    snapTimerRef.current = window.setTimeout(() => {
+      snapToNearestCard();
+    }, 130);
+  }, [getClosestIndex, snapToNearestCard, updateScrollState]);
 
   useEffect(() => {
     const track = carouselRef.current;
     if (!track) return;
 
+    const first = cardRefs.current[0];
+    const second = cardRefs.current[1];
+    if (first && second) {
+      stepRef.current = Math.max(1, second.offsetLeft - first.offsetLeft);
+    }
+
     const onResize = () => {
+      const firstCard = cardRefs.current[0];
+      const secondCard = cardRefs.current[1];
+      if (firstCard && secondCard) {
+        stepRef.current = Math.max(1, secondCard.offsetLeft - firstCard.offsetLeft);
+      }
       const closestIndex = getClosestIndex(track.scrollLeft);
       setActiveIndex((prev) => (prev === closestIndex ? prev : closestIndex));
+      updateScrollState();
     };
 
+    updateScrollState();
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [getClosestIndex]);
+  }, [domains.length, getClosestIndex, updateScrollState]);
 
   useEffect(() => {
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (snapTimerRef.current) window.clearTimeout(snapTimerRef.current);
     };
   }, []);
 
@@ -108,21 +175,21 @@ const DomainsSection = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.05, duration: 0.4 }}
         whileHover={{ y: -4 }}
-        className="group w-[174px] sm:w-[188px] md:w-[198px] shrink-0 snap-start"
+        className="group w-[158px] sm:w-[176px] md:w-[188px] lg:w-[198px] shrink-0 snap-center"
       >
-        <div className="h-[188px] rounded-[1.1rem] border border-border/70 bg-card/95 shadow-[0_12px_24px_-16px_hsl(var(--foreground)/0.2)] backdrop-blur-sm transition-all duration-300 group-hover:shadow-[0_16px_30px_-18px_hsl(var(--foreground)/0.24)] group-hover:border-border">
-          <div className="h-full flex flex-col items-center justify-center px-4 text-center">
+        <div className="h-[178px] sm:h-[186px] rounded-2xl border border-border/60 bg-card shadow-[0_8px_20px_-16px_hsl(var(--foreground)/0.28)] transition-all duration-300 group-hover:shadow-[0_16px_30px_-18px_hsl(var(--foreground)/0.26)] group-hover:-translate-y-0.5">
+          <div className="h-full flex flex-col items-center justify-center px-3.5 sm:px-4 text-center">
             <div
-              className="w-[56px] h-[56px] rounded-[1rem] border border-border/60 flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
+              className="w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl border border-border/55 flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
               style={{ backgroundColor: `${domain.color}14` }}
             >
-              <Icon className="w-6 h-6" style={{ color: domain.color }} />
+              <Icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" style={{ color: domain.color }} />
             </div>
 
-            <p className="mt-3.5 font-heading font-extrabold text-[1.45rem] md:text-[1.55rem] leading-none tracking-tight text-foreground">
+            <p className="mt-3 font-heading font-bold text-[1.05rem] sm:text-[1.2rem] md:text-[1.3rem] leading-none tracking-tight text-foreground">
               {domain.abbreviation}
             </p>
-            <p className="mt-1.5 text-[0.86rem] leading-[1.25] text-muted-foreground font-medium min-h-[42px] max-w-[154px]">
+            <p className="mt-1.5 text-[0.74rem] sm:text-[0.8rem] md:text-[0.84rem] leading-[1.3] text-muted-foreground font-medium min-h-[34px] sm:min-h-[38px] max-w-[150px]">
               {t("domain_cards", domain.abbreviation) || domain.name}
             </p>
           </div>
@@ -157,25 +224,26 @@ const DomainsSection = () => {
         </motion.div>
 
         <div className="relative">
-          <button
-            onClick={() => scrollToIndex(activeIndex - 1)}
-            disabled={activeIndex === 0}
-            aria-label="Previous domain"
-            className="absolute left-0 md:left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-lg border border-border/70 bg-card/95 shadow-[0_10px_24px_-16px_hsl(var(--foreground)/0.35)] flex items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground disabled:opacity-35 disabled:cursor-not-allowed"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
+          {canScrollLeft && (
+            <button
+              onClick={() => scrollByStep("left")}
+              aria-label="Previous domain"
+              className={`absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-xl border border-border/70 bg-card shadow-[0_8px_18px_-12px_hsl(var(--foreground)/0.35)] items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground hover:shadow-[0_12px_24px_-14px_hsl(var(--foreground)/0.4)] hidden md:flex ${isRtl ? "-right-3 lg:-right-5" : "-left-3 lg:-left-5"}`}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+          )}
 
           <div
             ref={carouselRef}
             onScroll={onTrackScroll}
-            className="flex gap-3.5 md:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory px-11 md:px-14 py-2 touch-pan-x overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-            style={{ scrollPaddingInline: "2.75rem" }}
+            className="flex gap-3 sm:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory px-1 pb-4 touch-pan-x overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {domains.map((domain, i) => (
               <div
                 key={domain.abbreviation}
-                className="shrink-0 snap-start"
+                className="shrink-0 snap-center"
                 ref={(el) => {
                   cardRefs.current[i] = el;
                 }}
@@ -185,14 +253,15 @@ const DomainsSection = () => {
             ))}
           </div>
 
-          <button
-            onClick={() => scrollToIndex(activeIndex + 1)}
-            disabled={activeIndex >= domains.length - 1}
-            aria-label="Next domain"
-            className="absolute right-0 md:right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-lg border border-border/70 bg-card/95 shadow-[0_10px_24px_-16px_hsl(var(--foreground)/0.35)] flex items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground disabled:opacity-35 disabled:cursor-not-allowed"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
+          {canScrollRight && (
+            <button
+              onClick={() => scrollByStep("right")}
+              aria-label="Next domain"
+              className={`absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-xl border border-border/70 bg-card shadow-[0_8px_18px_-12px_hsl(var(--foreground)/0.35)] items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground hover:shadow-[0_12px_24px_-14px_hsl(var(--foreground)/0.4)] hidden md:flex ${isRtl ? "-left-3 lg:-left-5" : "-right-3 lg:-right-5"}`}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          )}
 
           <div className="flex justify-center items-center gap-2 mt-6">
             {domains.map((domain, i) => {
@@ -202,7 +271,7 @@ const DomainsSection = () => {
                   key={`${domain.abbreviation}-${i}`}
                   onClick={() => scrollToIndex(i)}
                   aria-label={`Go to ${domain.name}`}
-                  className={`h-2 rounded-full transition-all duration-300 ${isActive ? "w-9 bg-primary" : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/45"}`}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${isActive ? "w-8 bg-primary" : "w-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/45"}`}
                 />
               );
             })}
