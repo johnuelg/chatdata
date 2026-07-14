@@ -131,9 +131,9 @@ const AnimatedChatDemo = () => {
   }, []);
 
   return (
-    <div className="relative w-full max-w-2xl text-left">
-      <div className="rounded-[30px] border border-primary/20 bg-card/80 shadow-[0_14px_40px_hsl(var(--primary)/0.18)] overflow-hidden backdrop-blur-md">
-        <div className="bg-gradient-to-r from-muted/45 via-muted/20 to-muted/45 border-b border-border/60 px-5 py-3.5 flex items-center gap-3">
+    <div className="relative mx-auto w-full max-w-[56rem] text-left px-1 sm:px-2">
+      <div className="overflow-hidden rounded-[22px] sm:rounded-[26px] md:rounded-[30px] border border-primary/20 bg-card/80 shadow-[0_14px_40px_hsl(var(--primary)/0.18)] backdrop-blur-md">
+        <div className="bg-gradient-to-r from-muted/45 via-muted/20 to-muted/45 border-b border-border/60 px-3.5 sm:px-5 py-3 sm:py-3.5 flex items-center gap-2.5 sm:gap-3">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-coral/80" />
             <span className="w-2.5 h-2.5 rounded-full bg-amber/80" />
@@ -143,7 +143,7 @@ const AnimatedChatDemo = () => {
           <Stethoscope className="w-4 h-4 text-primary" />
         </div>
 
-        <div ref={chatRef} className="min-h-[300px] max-h-[365px] overflow-y-auto p-4 md:p-6 space-y-4">
+        <div ref={chatRef} className="min-h-[clamp(15rem,35vh,19rem)] max-h-[clamp(18.5rem,45vh,24rem)] overflow-y-auto p-3.5 sm:p-4 md:p-6 space-y-3.5 sm:space-y-4">
           {messages.map((message, idx) => (
             <div
               key={`${message.role}-${idx}`}
@@ -155,7 +155,7 @@ const AnimatedChatDemo = () => {
                 </div>
               )}
               <div
-                className={`max-w-[86%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                className={`max-w-[90%] sm:max-w-[86%] rounded-2xl px-3.5 sm:px-4 py-2.5 sm:py-3 text-[13px] sm:text-sm leading-relaxed ${
                   message.role === "user"
                     ? "bg-primary/85 text-primary-foreground rounded-tr-md shadow-[0_8px_22px_hsl(var(--primary)/0.28)]"
                     : "bg-secondary/55 text-foreground rounded-tl-md"
@@ -217,9 +217,9 @@ const AnimatedChatDemo = () => {
           )}
         </div>
 
-        <div className="px-4 pb-4 pt-1">
-          <div className={`flex items-center gap-3 rounded-2xl border px-4 py-3.5 transition-all duration-300 ${isTypingInput ? "border-primary/60 ring-1 ring-primary/30" : "border-border/60"} bg-secondary/35`}>
-            <div className="flex-1 min-h-[20px] text-sm text-foreground text-left">
+        <div className="px-3.5 sm:px-4 pb-3.5 sm:pb-4 pt-1">
+          <div className={`flex items-center gap-2.5 sm:gap-3 rounded-2xl border px-3.5 sm:px-4 py-3 sm:py-3.5 transition-all duration-300 ${isTypingInput ? "border-primary/60 ring-1 ring-primary/30" : "border-border/60"} bg-secondary/35`}>
+            <div className="flex-1 min-h-[20px] text-[13px] sm:text-sm text-foreground text-left">
               {inputText ? (
                 <span>
                   {inputText}
@@ -230,7 +230,7 @@ const AnimatedChatDemo = () => {
               )}
             </div>
             <div
-              className={`relative w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
+              className={`relative w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
                 showSend ? "bg-primary scale-105 shadow-[0_0_0_4px_hsl(var(--primary)/0.18)]" : "bg-primary/60 scale-100"
               }`}
             >
@@ -248,8 +248,8 @@ const AnimatedChatDemo = () => {
           </div>
         </div>
       </div>
-      <div className="absolute -top-6 -right-4 w-24 h-24 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-4 -left-6 w-24 h-24 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+      <div className="absolute -top-5 -right-3 sm:-right-4 w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-3 -left-3 sm:-left-6 w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
     </div>
   );
 };
