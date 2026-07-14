@@ -66,7 +66,7 @@ const DomainsSection = () => {
   }, [domains.length]);
 
   const scroll = (direction: "left" | "right") => {
-    const track = carouselRef.current;
+    const track = scrollRef.current;
     if (!track) return;
 
     const effectiveDirection = isRtl
