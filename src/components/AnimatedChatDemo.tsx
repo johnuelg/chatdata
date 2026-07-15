@@ -131,7 +131,7 @@ const AnimatedChatDemo = () => {
   }, []);
 
   return (
-    <div className="relative mx-auto w-full max-w-[56rem] text-left px-1 sm:px-2">
+    <div className="relative mx-auto w-full max-w-[48rem] xl:max-w-[50rem] text-left px-2 sm:px-3 md:px-0">
       <div className="overflow-hidden rounded-[22px] sm:rounded-[26px] md:rounded-[30px] border border-primary/20 bg-card/80 shadow-[0_14px_40px_hsl(var(--primary)/0.18)] backdrop-blur-md">
         <div className="bg-gradient-to-r from-muted/45 via-muted/20 to-muted/45 border-b border-border/60 px-3.5 sm:px-5 py-3 sm:py-3.5 flex items-center gap-2.5 sm:gap-3">
           <div className="flex items-center gap-1.5">
