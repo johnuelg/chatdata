@@ -192,7 +192,7 @@ const DomainsSection = () => {
               className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-xl border border-border/55 flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
               style={{ backgroundColor: `${domain.color}14` }}
             >
-              <Icon className="w-5 h-5 sm:w-5.5 sm:h-5.5 md:w-6 md:h-6" style={{ color: domain.color }} />
+              <Icon className="w-5 h-5 sm:w-[1.35rem] sm:h-[1.35rem] md:w-6 md:h-6" style={{ color: domain.color }} />
             </div>
 
             <p className="mt-2.5 font-heading font-extrabold text-[0.95rem] sm:text-[1.04rem] md:text-[1.12rem] leading-none tracking-tight text-foreground">
@@ -239,7 +239,7 @@ const DomainsSection = () => {
             disabled={!canScrollLeft}
             className={`absolute top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-lg border border-border/70 bg-card shadow-[0_8px_18px_-12px_hsl(var(--foreground)/0.35)] items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground hover:shadow-[0_12px_24px_-14px_hsl(var(--foreground)/0.4)] hidden md:flex ${isRtl ? "-right-3 lg:-right-5" : "-left-3 lg:-left-5"} ${canScrollLeft ? "opacity-100" : "opacity-0 pointer-events-none"}`}
           >
-            <ChevronLeft className="w-4.5 h-4.5" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
 
           <div
@@ -266,7 +266,7 @@ const DomainsSection = () => {
             disabled={!canScrollRight}
             className={`absolute top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-lg border border-border/70 bg-card shadow-[0_8px_18px_-12px_hsl(var(--foreground)/0.35)] items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground hover:shadow-[0_12px_24px_-14px_hsl(var(--foreground)/0.4)] hidden md:flex ${isRtl ? "-left-3 lg:-left-5" : "-right-3 lg:-right-5"} ${canScrollRight ? "opacity-100" : "opacity-0 pointer-events-none"}`}
           >
-            <ChevronRight className="w-4.5 h-4.5" />
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </div>
