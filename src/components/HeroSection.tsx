@@ -232,7 +232,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-          className="w-full max-w-5xl mx-auto px-1 sm:px-2 md:px-4"
+          className="w-full max-w-4xl mx-auto px-2 sm:px-4 md:px-5"
         >
           <AnimatedChatDemo />
         </motion.div>
