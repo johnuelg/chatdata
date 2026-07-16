@@ -26,153 +26,75 @@ const DomainsSection = () => {
 
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-  const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const cardOffsetsRef = useRef<number[]>([]);
-  const scrollRafRef = useRef<number>();
-  const touchEndTimeoutRef = useRef<number>();
+  const stepTimeoutRef = useRef<number>();
 
-  const updateScrollState = (nextIndex?: number) => {
+  const checkScroll = () => {
     const track = scrollRef.current;
     if (!track) return;
 
-    const current = track.scrollLeft;
-    const max = track.scrollWidth - track.clientWidth;
-
-    if (typeof nextIndex === "number") {
-      setActiveIndex(nextIndex);
-    }
+    const current = Math.abs(track.scrollLeft);
+    const max = Math.max(0, track.scrollWidth - track.clientWidth);
 
     setCanScrollLeft(current > 5);
     setCanScrollRight(current < max - 5);
   };
 
-  const recalcLayout = () => {
+  const getScrollStep = () => {
     const track = scrollRef.current;
-    if (!track) return;
+    if (!track) return 260;
 
-    const cards = track.querySelectorAll<HTMLElement>("[data-domain-card]");
+    const firstCard = track.querySelector<HTMLElement>("[data-domain-card]");
+    if (!firstCard) return 260;
 
-    if (!cards.length) {
-      cardOffsetsRef.current = [];
-      setActiveIndex(0);
-      updateScrollState(0);
-      return;
-    }
-
-    cardOffsetsRef.current = Array.from(cards).map((card) => card.offsetLeft);
-
-    const current = track.scrollLeft;
-    const nearest = cardOffsetsRef.current.reduce(
-      (closest, offset, index) => {
-        const distance = Math.abs(offset - current);
-        if (distance < closest.distance) {
-          return { index, distance };
-        }
-        return closest;
-      },
-      { index: 0, distance: Number.POSITIVE_INFINITY },
-    ).index;
-
-    setActiveIndex(nearest);
-    updateScrollState(nearest);
-  };
-
-  const scrollToIndex = (index: number, behavior: ScrollBehavior = "smooth") => {
-    const track = scrollRef.current;
-    if (!track || cardOffsetsRef.current.length === 0) return;
-
-    const clampedIndex = Math.max(0, Math.min(index, cardOffsetsRef.current.length - 1));
-
-    track.scrollTo({
-      left: cardOffsetsRef.current[clampedIndex],
-      behavior,
-    });
-
-    updateScrollState(clampedIndex);
-  };
-
-  const syncNearestCard = () => {
-    const track = scrollRef.current;
-    if (!track || cardOffsetsRef.current.length === 0) return;
-
-    const current = track.scrollLeft;
-    const nearest = cardOffsetsRef.current.reduce(
-      (closest, offset, index) => {
-        const distance = Math.abs(offset - current);
-        if (distance < closest.distance) {
-          return { index, distance };
-        }
-        return closest;
-      },
-      { index: 0, distance: Number.POSITIVE_INFINITY },
-    ).index;
-
-    updateScrollState(nearest);
+    const styles = window.getComputedStyle(track);
+    const gap = parseFloat(styles.columnGap || styles.gap || "0") || 0;
+    return firstCard.offsetWidth + gap;
   };
 
   useEffect(() => {
-    recalcLayout();
+    checkScroll();
 
     const onResize = () => {
-      recalcLayout();
+      checkScroll();
     };
 
     window.addEventListener("resize", onResize);
     return () => {
       window.removeEventListener("resize", onResize);
-      if (scrollRafRef.current) {
-        window.cancelAnimationFrame(scrollRafRef.current);
-      }
-      if (touchEndTimeoutRef.current) {
-        window.clearTimeout(touchEndTimeoutRef.current);
+      if (stepTimeoutRef.current) {
+        window.clearTimeout(stepTimeoutRef.current);
       }
     };
   }, [domains.length]);
 
   useEffect(() => {
-    recalcLayout();
+    checkScroll();
   }, [isRtl]);
 
   const scroll = (direction: "left" | "right") => {
-    const delta = isRtl
-      ? (direction === "left" ? 1 : -1)
-      : (direction === "left" ? -1 : 1);
-    scrollToIndex(activeIndex + delta);
-  };
+    const track = scrollRef.current;
+    if (!track) return;
 
-  const handleScroll = () => {
-    if (scrollRafRef.current) return;
+    const step = getScrollStep();
+    const actualDirection = isRtl
+      ? (direction === "left" ? "right" : "left")
+      : direction;
 
-    scrollRafRef.current = window.requestAnimationFrame(() => {
-      syncNearestCard();
-      scrollRafRef.current = undefined;
+    const newScrollLeft = actualDirection === "left"
+      ? track.scrollLeft - step
+      : track.scrollLeft + step;
+
+    track.scrollTo({
+      left: newScrollLeft,
+      behavior: "smooth",
     });
-  };
 
-  const handleTouchEnd = () => {
-    if (touchEndTimeoutRef.current) {
-      window.clearTimeout(touchEndTimeoutRef.current);
+    if (stepTimeoutRef.current) {
+      window.clearTimeout(stepTimeoutRef.current);
     }
 
-    touchEndTimeoutRef.current = window.setTimeout(() => {
-      const track = scrollRef.current;
-      if (!track || cardOffsetsRef.current.length === 0) return;
-
-      const current = track.scrollLeft;
-      const nearest = cardOffsetsRef.current.reduce(
-        (closest, offset, index) => {
-          const distance = Math.abs(offset - current);
-          if (distance < closest.distance) {
-            return { index, distance };
-          }
-          return closest;
-        },
-        { index: 0, distance: Number.POSITIVE_INFINITY },
-      ).index;
-
-      scrollToIndex(nearest);
-    }, 80);
+    stepTimeoutRef.current = window.setTimeout(checkScroll, 320);
   };
 
   const DomainCard = ({ domain, index }: { domain: typeof domains[0]; index: number }) => {
@@ -244,15 +166,14 @@ const DomainsSection = () => {
 
           <div
             ref={scrollRef}
-            onScroll={handleScroll}
-            onTouchEnd={handleTouchEnd}
-            className="flex gap-2.5 sm:gap-3 md:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory px-1 pb-4 touch-pan-x md:touch-auto overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            onScroll={checkScroll}
+            className="flex gap-2.5 sm:gap-3 md:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory px-1 pb-4 touch-pan-x overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {domains.map((domain, i) => (
               <div
                 key={domain.abbreviation}
-                className="shrink-0 snap-start"
+                className="shrink-0 snap-center"
                 data-domain-card
               >
                 <DomainCard domain={domain} index={i} />
