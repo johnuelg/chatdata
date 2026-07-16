@@ -26,31 +26,58 @@ const DomainsSection = () => {
 
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [maxIndex, setMaxIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const stepTimeoutRef = useRef<number>();
 
-  const checkScroll = () => {
+  const getCarouselMetrics = () => {
     const track = scrollRef.current;
-    if (!track) return;
+    if (!track) return null;
 
-    const current = Math.abs(track.scrollLeft);
-    const max = Math.max(0, track.scrollWidth - track.clientWidth);
-
-    setCanScrollLeft(current > 5);
-    setCanScrollRight(current < max - 5);
-  };
-
-  const getScrollStep = () => {
-    const track = scrollRef.current;
-    if (!track) return 260;
-
-    const firstCard = track.querySelector<HTMLElement>("[data-domain-card]");
-    if (!firstCard) return 260;
+    const cards = Array.from(track.querySelectorAll<HTMLElement>("[data-domain-card]"));
+    if (cards.length === 0) return null;
 
     const styles = window.getComputedStyle(track);
     const gap = parseFloat(styles.columnGap || styles.gap || "0") || 0;
-    return firstCard.offsetWidth + gap;
+    const cardWidth = cards[0].getBoundingClientRect().width;
+    const step = cardWidth + gap;
+    const visibleCount = Math.max(1, Math.floor((track.clientWidth + gap) / step));
+
+    return {
+      cards,
+      maxIndex: Math.max(0, cards.length - visibleCount),
+    };
   };
+
+  const checkScroll = () => {
+    const track = scrollRef.current;
+    const metrics = getCarouselMetrics();
+    if (!track || !metrics) return;
+
+    const trackLeft = track.getBoundingClientRect().left;
+    let nearestIndex = 0;
+    let nearestDistance = Number.POSITIVE_INFINITY;
+
+    metrics.cards.forEach((card, index) => {
+      const distance = Math.abs(card.getBoundingClientRect().left - trackLeft);
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearestIndex = index;
+      }
+    });
+
+    const boundedIndex = Math.min(nearestIndex, metrics.maxIndex);
+
+    setCurrentIndex(boundedIndex);
+    setMaxIndex(metrics.maxIndex);
+    setCanScrollLeft(boundedIndex > 0);
+    setCanScrollRight(boundedIndex < metrics.maxIndex);
+  };
+
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [domains.length]);
 
   useEffect(() => {
     checkScroll();
@@ -73,22 +100,21 @@ const DomainsSection = () => {
   }, [isRtl]);
 
   const scroll = (direction: "left" | "right") => {
-    const track = scrollRef.current;
-    if (!track) return;
+    const metrics = getCarouselMetrics();
+    if (!metrics) return;
 
-    const step = getScrollStep();
-    const actualDirection = isRtl
-      ? (direction === "left" ? "right" : "left")
-      : direction;
+    const actualStep = isRtl
+      ? (direction === "left" ? 1 : -1)
+      : (direction === "left" ? -1 : 1);
 
-    const newScrollLeft = actualDirection === "left"
-      ? track.scrollLeft - step
-      : track.scrollLeft + step;
+    const nextIndex = Math.max(0, Math.min(maxIndex, currentIndex + actualStep));
+    const targetCard = metrics.cards[nextIndex];
+    if (!targetCard) return;
 
-    track.scrollTo({
-      left: newScrollLeft,
-      behavior: "smooth",
-    });
+    targetCard.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+    setCurrentIndex(nextIndex);
+    setCanScrollLeft(nextIndex > 0);
+    setCanScrollRight(nextIndex < metrics.maxIndex);
 
     if (stepTimeoutRef.current) {
       window.clearTimeout(stepTimeoutRef.current);
@@ -106,7 +132,7 @@ const DomainsSection = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.05, duration: 0.4 }}
         whileHover={{ y: -4 }}
-        className="group w-[8.25rem] sm:w-36 md:w-40 lg:w-44 shrink-0 snap-start"
+        className="group w-full snap-start"
       >
         <div className="h-[154px] sm:h-[168px] md:h-[176px] rounded-xl border border-border/60 bg-card shadow-[0_8px_20px_-16px_hsl(var(--foreground)/0.24)] transition-all duration-300 group-hover:shadow-[0_14px_26px_-18px_hsl(var(--foreground)/0.24)] group-hover:-translate-y-0.5">
           <div className="h-full flex flex-col items-center justify-center px-3 sm:px-3.5 md:px-4 text-center">
@@ -167,13 +193,13 @@ const DomainsSection = () => {
           <div
             ref={scrollRef}
             onScroll={checkScroll}
-            className="flex gap-2.5 sm:gap-3 md:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory px-1 pb-4 touch-pan-x overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            className="flex gap-3 md:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory px-1 pb-4 touch-pan-x overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {domains.map((domain, i) => (
               <div
                 key={domain.abbreviation}
-                className="shrink-0 snap-center"
+                className="shrink-0 snap-start basis-[calc((100%-0rem)/1)] sm:basis-[calc((100%-0.75rem)/2)] md:basis-[calc((100%-2rem)/3)] lg:basis-[calc((100%-4rem)/5)]"
                 data-domain-card
               >
                 <DomainCard domain={domain} index={i} />
