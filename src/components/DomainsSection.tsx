@@ -107,7 +107,7 @@ const DomainsSection = () => {
       ? (direction === "left" ? 1 : -1)
       : (direction === "left" ? -1 : 1);
 
-    const nextIndex = Math.max(0, Math.min(maxIndex, currentIndex + actualStep));
+    const nextIndex = Math.max(0, Math.min(metrics.maxIndex, currentIndex + actualStep));
     const targetCard = metrics.cards[nextIndex];
     if (!targetCard) return;
 
