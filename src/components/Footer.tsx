@@ -1,6 +1,5 @@
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useLanguage } from "@/contexts/LanguageContext";
-import BrandLogo from "@/components/BrandLogo";
 
 const Footer = () => {
   const { data: settings } = useSiteSettings();
@@ -15,11 +14,11 @@ const Footer = () => {
     <footer className="py-10 bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="brand-lockup brand-logo-link group focus-visible:ring-2 focus-visible:ring-primary-foreground/50 focus-visible:ring-offset-2 focus-visible:ring-offset-primary">
-          <BrandLogo
-            src={logo?.url}
-            alt={logo?.alt || "Taif Children's Hospital"}
-            variant="footer"
-          />
+          {logo?.url ? (
+            <img src={logo.url} alt={logo.alt} className="brand-logo brand-logo-footer" />
+          ) : (
+            <img src="/images/hospital-logo.svg" alt="Taif Children's Hospital" className="brand-logo brand-logo-footer" />
+          )}
           <span className="font-heading font-semibold text-sm">{name}</span>
         </button>
         <p className="text-xs text-primary-foreground/75 text-center font-medium">{copyright}</p>

@@ -21,7 +21,6 @@ import { useSiteSettings, useIsAdmin } from "@/hooks/useSiteSettings";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useFirstPermittedPath } from "@/hooks/useNavPermissions";
 import { supabase } from "@/integrations/supabase/client";
-import BrandLogo from "@/components/BrandLogo";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -120,11 +119,19 @@ const Navbar = () => {
           onClick={() => scrollTo("#home")}
           className="brand-lockup brand-logo-link group"
         >
-          <BrandLogo
-            src={logo?.url}
-            alt={logo?.alt || "Taif Children's Hospital"}
-            variant="header"
-          />
+          {logo?.url ? (
+            <img
+              src={logo.url}
+              alt={logo.alt}
+              className="brand-logo brand-logo-header brand-logo-header-hover"
+            />
+          ) : (
+            <img
+              src="/images/hospital-logo.svg"
+              alt="Taif Children's Hospital"
+              className="brand-logo brand-logo-header brand-logo-header-hover"
+            />
+          )}
           <div className="hidden sm:block leading-tight">
             <span className="block font-heading font-bold text-sm md:text-base text-foreground">
               {lang === "ar" ? "مستشفى الطائف للأطفال" : "Taif Children's Hospital"}
