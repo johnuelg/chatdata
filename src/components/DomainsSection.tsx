@@ -30,6 +30,20 @@ const DomainsSection = () => {
   const [maxIndex, setMaxIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const stepTimeoutRef = useRef<number>();
+  const scrollEndTimeoutRef = useRef<number>();
+
+  const syncCarouselState = (nextIndex: number, nextMaxIndex: number) => {
+    setCurrentIndex((prev) => (prev === nextIndex ? prev : nextIndex));
+    setMaxIndex((prev) => (prev === nextMaxIndex ? prev : nextMaxIndex));
+    setCanScrollLeft((prev) => {
+      const next = nextIndex > 0;
+      return prev === next ? prev : next;
+    });
+    setCanScrollRight((prev) => {
+      const next = nextIndex < nextMaxIndex;
+      return prev === next ? prev : next;
+    });
+  };
 
   const getCarouselMetrics = () => {
     const track = scrollRef.current;
@@ -69,10 +83,17 @@ const DomainsSection = () => {
 
     const boundedIndex = Math.min(nearestIndex, metrics.maxIndex);
 
-    setCurrentIndex(boundedIndex);
-    setMaxIndex(metrics.maxIndex);
-    setCanScrollLeft(boundedIndex > 0);
-    setCanScrollRight(boundedIndex < metrics.maxIndex);
+    syncCarouselState(boundedIndex, metrics.maxIndex);
+  };
+
+  const handleTrackScroll = () => {
+    if (scrollEndTimeoutRef.current) {
+      window.clearTimeout(scrollEndTimeoutRef.current);
+    }
+
+    scrollEndTimeoutRef.current = window.setTimeout(() => {
+      checkScroll();
+    }, 90);
   };
 
   useEffect(() => {
@@ -92,6 +113,9 @@ const DomainsSection = () => {
       if (stepTimeoutRef.current) {
         window.clearTimeout(stepTimeoutRef.current);
       }
+      if (scrollEndTimeoutRef.current) {
+        window.clearTimeout(scrollEndTimeoutRef.current);
+      }
     };
   }, [domains.length]);
 
@@ -100,8 +124,9 @@ const DomainsSection = () => {
   }, [isRtl]);
 
   const scroll = (direction: "left" | "right") => {
+    const track = scrollRef.current;
     const metrics = getCarouselMetrics();
-    if (!metrics) return;
+    if (!track || !metrics) return;
 
     const actualStep = isRtl
       ? (direction === "left" ? 1 : -1)
@@ -111,10 +136,16 @@ const DomainsSection = () => {
     const targetCard = metrics.cards[nextIndex];
     if (!targetCard) return;
 
-    targetCard.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
-    setCurrentIndex(nextIndex);
-    setCanScrollLeft(nextIndex > 0);
-    setCanScrollRight(nextIndex < metrics.maxIndex);
+    const maxScrollLeft = Math.max(0, track.scrollWidth - track.clientWidth);
+    const targetLeft = Math.max(0, Math.min(maxScrollLeft, targetCard.offsetLeft));
+    const rtlAdjustedLeft = isRtl ? Math.max(0, maxScrollLeft - targetLeft) : targetLeft;
+
+    track.scrollTo({
+      left: rtlAdjustedLeft,
+      behavior: "smooth",
+    });
+
+    syncCarouselState(nextIndex, metrics.maxIndex);
 
     if (stepTimeoutRef.current) {
       window.clearTimeout(stepTimeoutRef.current);
@@ -192,7 +223,7 @@ const DomainsSection = () => {
 
           <div
             ref={scrollRef}
-            onScroll={checkScroll}
+            onScroll={handleTrackScroll}
             className="flex gap-3 md:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory px-1 pb-4 touch-pan-x overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
