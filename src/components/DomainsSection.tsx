@@ -159,9 +159,9 @@ const DomainsSection = () => {
 
     return (
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.05, duration: 0.4 }}
+        initial={false}
+        animate={false}
+        transition={{ duration: 0 }}
         whileHover={{ y: -4 }}
         className="group w-full snap-start"
       >
@@ -216,7 +216,7 @@ const DomainsSection = () => {
             onClick={() => scroll("left")}
             aria-label="Previous domain"
             disabled={!canScrollLeft}
-            className={`absolute top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-lg border border-border/70 bg-card shadow-[0_8px_18px_-12px_hsl(var(--foreground)/0.35)] items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground hover:shadow-[0_12px_24px_-14px_hsl(var(--foreground)/0.4)] hidden md:flex ${isRtl ? "-right-3 lg:-right-5" : "-left-3 lg:-left-5"} ${canScrollLeft ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+            className={`absolute top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-lg border border-border/70 bg-card shadow-[0_8px_18px_-12px_hsl(var(--foreground)/0.35)] items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground hover:shadow-[0_12px_24px_-14px_hsl(var(--foreground)/0.4)] hidden md:flex ${isRtl ? "-right-3 lg:-right-5" : "-left-3 lg:-left-5"} ${canScrollLeft ? "pointer-events-auto visible" : "pointer-events-none invisible"}`}
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -242,7 +242,7 @@ const DomainsSection = () => {
             onClick={() => scroll("right")}
             aria-label="Next domain"
             disabled={!canScrollRight}
-            className={`absolute top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-lg border border-border/70 bg-card shadow-[0_8px_18px_-12px_hsl(var(--foreground)/0.35)] items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground hover:shadow-[0_12px_24px_-14px_hsl(var(--foreground)/0.4)] hidden md:flex ${isRtl ? "-left-3 lg:-left-5" : "-right-3 lg:-right-5"} ${canScrollRight ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+            className={`absolute top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-lg border border-border/70 bg-card shadow-[0_8px_18px_-12px_hsl(var(--foreground)/0.35)] items-center justify-center text-foreground transition-all duration-300 hover:bg-accent hover:text-accent-foreground hover:shadow-[0_12px_24px_-14px_hsl(var(--foreground)/0.4)] hidden md:flex ${isRtl ? "-left-3 lg:-left-5" : "-right-3 lg:-right-5"} ${canScrollRight ? "pointer-events-auto visible" : "pointer-events-none invisible"}`}
           >
             <ChevronRight className="w-4 h-4" />
           </button>
