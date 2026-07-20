@@ -136,7 +136,7 @@ const Navbar = () => {
             <span className="block brand-name-main">
               {lang === "ar" ? "مستشفى الطائف للأطفال" : "Taif Children's Hospital"}
             </span>
-            <span className="block brand-name-sub">
+            <span className="block brand-name-sub mt-0.5">
               {lang === "ar" ? "منصة الذكاء الاصطناعي للبيانات" : "Conversational AI Data Platform"}
             </span>
           </div>
