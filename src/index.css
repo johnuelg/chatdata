@@ -142,39 +142,62 @@
     @apply inline-flex items-center gap-3 rounded-lg text-left focus:outline-none;
   }
 
+  .brand-lockup-header {
+    @apply gap-3.5 md:gap-4;
+  }
+
   .brand-logo {
     @apply object-contain transition-all duration-300;
+    image-rendering: -webkit-optimize-contrast;
+    backface-visibility: hidden;
+    transform: translateZ(0);
   }
 
   .brand-logo-header {
-    @apply h-10 w-10 md:h-12 md:w-12;
+    @apply h-11 w-11 md:h-12 md:w-12;
   }
 
   .brand-logo-header-hover {
-    @apply group-hover:scale-110;
+    @apply group-hover:scale-105;
     filter: drop-shadow(0 0 0 hsl(var(--primary) / 0));
   }
 
   .brand-logo-link:hover .brand-logo-header-hover {
-    filter: drop-shadow(0 0 10px hsl(var(--primary) / 0.5));
+    filter: drop-shadow(0 0 9px hsl(var(--primary) / 0.45));
   }
 
   .brand-logo-footer {
     @apply h-10 w-10;
-    filter: brightness(0) invert(1);
+    filter: drop-shadow(0 0 7px hsl(var(--primary) / 0.28));
   }
 
   .dark .brand-logo-footer {
-    filter: drop-shadow(0 0 8px hsl(var(--primary) / 0.6));
+    filter: drop-shadow(0 0 10px hsl(var(--primary) / 0.52));
   }
 
   .brand-logo-link:hover .brand-logo-footer {
-    transform: scale(1.1);
-    filter: brightness(0) invert(1) drop-shadow(0 0 12px hsl(var(--primary-foreground) / 0.4));
+    transform: scale(1.06);
+    filter: drop-shadow(0 0 11px hsl(var(--primary) / 0.45));
   }
 
   .dark .brand-logo-link:hover .brand-logo-footer {
-    filter: drop-shadow(0 0 12px hsl(var(--primary) / 0.8));
+    filter: drop-shadow(0 0 14px hsl(var(--primary) / 0.72));
+  }
+
+  .brand-name-main {
+    @apply font-heading font-bold text-[15px] leading-tight tracking-normal text-foreground md:text-[18px];
+  }
+
+  .brand-name-sub {
+    @apply font-body font-medium text-[11px] leading-tight text-muted-foreground md:text-[13px];
+  }
+
+  .site-footer-shell {
+    @apply border-t border-border/70 bg-card text-card-foreground;
+  }
+
+  .site-footer-copyright {
+    @apply font-body text-xs font-medium text-muted-foreground/95 md:text-sm;
   }
 
   .brand-logo-login {

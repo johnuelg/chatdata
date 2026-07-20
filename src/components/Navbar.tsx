@@ -117,7 +117,7 @@ const Navbar = () => {
         <button
           type="button"
           onClick={() => scrollTo("#home")}
-          className="brand-lockup brand-logo-link group"
+          className="brand-lockup brand-lockup-header brand-logo-link group"
         >
           {logo?.url ? (
             <img
@@ -133,10 +133,10 @@ const Navbar = () => {
             />
           )}
           <div className="hidden sm:block leading-tight">
-            <span className="block font-heading font-bold text-sm md:text-base text-foreground">
+            <span className="block brand-name-main">
               {lang === "ar" ? "مستشفى الطائف للأطفال" : "Taif Children's Hospital"}
             </span>
-            <span className="block text-[10px] md:text-xs text-muted-foreground">
+            <span className="block brand-name-sub">
               {lang === "ar" ? "منصة الذكاء الاصطناعي للبيانات" : "Conversational AI Data Platform"}
             </span>
           </div>
