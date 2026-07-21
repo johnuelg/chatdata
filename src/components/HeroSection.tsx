@@ -113,7 +113,7 @@ const HeroSection = () => {
   const line2After = line2Parts[1] || "";
 
   return (
-    <section id="home" className="relative min-h-screen flex flex-col items-center justify-center pt-28 sm:pt-32 md:pt-36 overflow-hidden gradient-hero">
+    <section id="home" className="relative min-h-[100svh] flex flex-col items-center justify-center pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 md:pb-24 overflow-hidden gradient-hero">
       {/* Soft blue radial gradient backdrop */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -174,7 +174,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="inline-flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-primary/20 bg-primary/10 text-primary text-[12px] sm:text-[13px] font-semibold mt-2 sm:mt-3 mb-10 backdrop-blur-sm tracking-[0.01em] shadow-sm"
+          className="inline-flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-primary/20 bg-primary/10 text-primary text-[12px] sm:text-[13px] font-semibold mt-2 sm:mt-3 mb-12 md:mb-14 backdrop-blur-sm tracking-[0.01em] shadow-sm"
         >
           <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/15">
             <Bot className="w-3 h-3" strokeWidth={2.5} />
@@ -187,7 +187,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-          className="font-heading font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.05] mb-8 tracking-tight text-balance"
+          className="font-heading font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.14] sm:leading-[1.12] md:leading-[1.1] lg:leading-[1.08] xl:leading-[1.06] mb-10 md:mb-12 pb-2 tracking-tight text-balance"
         >
           {titleLine1}
           <br />
@@ -207,7 +207,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-          className="max-w-3xl mx-auto text-muted-foreground text-base sm:text-lg md:text-xl mb-10 leading-[1.7] font-body text-pretty"
+          className="max-w-3xl mx-auto text-muted-foreground text-base sm:text-lg md:text-xl mb-12 md:mb-14 leading-[1.7] font-body text-pretty"
         >
           {renderHighlighted(description, lang)}
         </motion.p>
