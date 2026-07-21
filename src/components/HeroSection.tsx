@@ -193,7 +193,7 @@ const HeroSection = () => {
           <br />
           <span className="inline-flex items-baseline flex-wrap justify-center pb-[0.06em]">
             {line2Before}
-            <span className="text-gradient-primary mx-2 inline-block pb-[0.08em] leading-[1.08]">{typewriterText}</span>
+            <span className="text-gradient-primary mx-2 inline-block pb-[0.14em] leading-[1.12]">{typewriterText}</span>
             <span
               className="inline-block ml-0.5 w-[0.12em] sm:w-[0.115em] md:w-[0.11em] h-[0.92em] bg-primary rounded-[2px] animate-blink align-baseline relative top-[0.03em]"
               aria-hidden="true"
