@@ -64,7 +64,6 @@ const AboutSection = () => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.55, ease: "easeOut" },
     },
   };
 
@@ -73,7 +72,6 @@ const AboutSection = () => {
     visible: {
       opacity: 1,
       x: 0,
-      transition: { duration: 0.55, ease: "easeOut" },
     },
   };
 
@@ -82,26 +80,6 @@ const AboutSection = () => {
     visible: {
       opacity: 1,
       x: 0,
-      transition: { duration: 0.55, ease: "easeOut", delay: shouldReduceMotion ? 0 : 0.06 },
-    },
-  };
-
-  const listVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: shouldReduceMotion ? 0 : 0.06,
-        delayChildren: shouldReduceMotion ? 0 : 0.08,
-      },
-    },
-  };
-
-  const listItemVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 8 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.35, ease: "easeOut" },
     },
   };
 
@@ -117,6 +95,7 @@ const AboutSection = () => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.35 }}
           variants={introVariants}
+          transition={{ duration: 0.55 }}
           className="text-center mb-16"
         >
           <span className="inline-block px-3 py-1 rounded-full bg-primary/8 text-primary text-xs font-bold uppercase tracking-widest mb-4">
@@ -137,6 +116,7 @@ const AboutSection = () => {
             whileInView="visible"
             viewport={{ once: true, amount: 0.25 }}
             variants={leftCardVariants}
+            transition={{ duration: 0.55 }}
             className="group relative bg-card rounded-2xl p-8 lg:p-10 border border-destructive/20 shadow-[var(--card-shadow)] hover:shadow-[var(--card-hover-shadow)] hover:-translate-y-2 transition-all duration-500 flex flex-col overflow-hidden will-change-transform"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-destructive/5 via-transparent to-destructive/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -155,17 +135,14 @@ const AboutSection = () => {
               {challengeDesc}
             </p>
 
-            <motion.div
-              className="relative z-10 space-y-4 mt-auto"
-              variants={listVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.5 }}
-            >
+            <div className="relative z-10 space-y-4 mt-auto">
               {challengeItems.map((item, i) => (
                 <motion.div
                   key={i}
-                  variants={listItemVariants}
+                  initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.9 }}
+                  transition={{ duration: 0.3, delay: shouldReduceMotion ? 0 : i * 0.06 }}
                   className="flex items-center gap-3 text-sm text-muted-foreground"
                 >
                   <div className="w-7 h-7 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
@@ -174,7 +151,7 @@ const AboutSection = () => {
                   {item.text}
                 </motion.div>
               ))}
-            </motion.div>
+            </div>
           </motion.div>
 
           {/* Our Solution */}
@@ -183,6 +160,7 @@ const AboutSection = () => {
             whileInView="visible"
             viewport={{ once: true, amount: 0.25 }}
             variants={rightCardVariants}
+            transition={{ duration: 0.55, delay: shouldReduceMotion ? 0 : 0.06 }}
             className="group relative bg-card rounded-2xl p-8 lg:p-10 border border-primary/20 shadow-[var(--card-shadow)] hover:shadow-[var(--card-hover-shadow)] hover:-translate-y-2 transition-all duration-500 flex flex-col overflow-hidden will-change-transform"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -201,17 +179,14 @@ const AboutSection = () => {
               {solutionDesc}
             </p>
 
-            <motion.div
-              className="relative z-10 space-y-4 mt-auto"
-              variants={listVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.5 }}
-            >
+            <div className="relative z-10 space-y-4 mt-auto">
               {solutionItems.map((item, i) => (
                 <motion.div
                   key={i}
-                  variants={listItemVariants}
+                  initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.9 }}
+                  transition={{ duration: 0.3, delay: shouldReduceMotion ? 0 : i * 0.06 }}
                   className="flex items-center gap-3 text-sm text-foreground"
                 >
                   <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -220,7 +195,7 @@ const AboutSection = () => {
                   {item.text}
                 </motion.div>
               ))}
-            </motion.div>
+            </div>
           </motion.div>
         </div>
         </div>
