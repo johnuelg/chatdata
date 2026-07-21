@@ -187,13 +187,13 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-          className="font-heading font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.14] sm:leading-[1.12] md:leading-[1.1] lg:leading-[1.08] xl:leading-[1.06] mb-10 md:mb-12 pb-2 tracking-tight text-balance"
+          className="font-heading font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.18] sm:leading-[1.15] md:leading-[1.12] lg:leading-[1.1] xl:leading-[1.08] mb-10 md:mb-12 pb-3 tracking-tight text-balance"
         >
           {titleLine1}
           <br />
-          <span className="inline-flex items-baseline flex-wrap justify-center">
+          <span className="inline-flex items-baseline flex-wrap justify-center pb-[0.06em]">
             {line2Before}
-            <span className="text-gradient-primary mx-2">{typewriterText}</span>
+            <span className="text-gradient-primary mx-2 inline-block pb-[0.08em] leading-[1.08]">{typewriterText}</span>
             <span
               className="inline-block ml-0.5 w-[0.12em] sm:w-[0.115em] md:w-[0.11em] h-[0.92em] bg-primary rounded-[2px] animate-blink align-baseline relative top-[0.03em]"
               aria-hidden="true"
