@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   AlertTriangle,
   Zap,
@@ -15,6 +15,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const AboutSection = () => {
   const { lang, t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
 
   const sectionLabel = lang === "ar" ? "من نحن" : "About Us";
   const heading = t("about", "title") || (lang === "ar" ? "عن منصتنا" : "About Our Platform");
@@ -58,6 +59,30 @@ const AboutSection = () => {
         { icon: Database, text: "All data in one place. No silos. No duplication." },
       ];
 
+  const introVariants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+    },
+  };
+
+  const leftCardVariants = {
+    hidden: { opacity: 0, x: shouldReduceMotion ? 0 : -20 },
+    visible: {
+      opacity: 1,
+      x: 0,
+    },
+  };
+
+  const rightCardVariants = {
+    hidden: { opacity: 0, x: shouldReduceMotion ? 0 : 20 },
+    visible: {
+      opacity: 1,
+      x: 0,
+    },
+  };
+
   return (
     <section id="about" className="py-20 md:py-32 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-secondary/40 via-background to-primary/5" />
@@ -66,10 +91,11 @@ const AboutSection = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-6xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.35 }}
+          variants={introVariants}
+          transition={{ duration: 0.55 }}
           className="text-center mb-16"
         >
           <span className="inline-block px-3 py-1 rounded-full bg-primary/8 text-primary text-xs font-bold uppercase tracking-widest mb-4">
@@ -86,11 +112,12 @@ const AboutSection = () => {
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-stretch">
           {/* The Challenge */}
           <motion.div
-            initial={{ opacity: 0, x: -24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="group relative bg-card rounded-2xl p-8 lg:p-10 border border-destructive/20 shadow-[var(--card-shadow)] hover:shadow-[var(--card-hover-shadow)] hover:-translate-y-2 transition-all duration-500 flex flex-col overflow-hidden"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.25 }}
+            variants={leftCardVariants}
+            transition={{ duration: 0.55 }}
+            className="group relative bg-card rounded-2xl p-8 lg:p-10 border border-destructive/20 shadow-[var(--card-shadow)] hover:shadow-[var(--card-hover-shadow)] hover:-translate-y-2 transition-all duration-500 flex flex-col overflow-hidden will-change-transform"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-destructive/5 via-transparent to-destructive/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="absolute inset-0 rounded-2xl border-2 border-destructive/0 group-hover:border-destructive/20 transition-all duration-500" />
@@ -112,10 +139,10 @@ const AboutSection = () => {
               {challengeItems.map((item, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08 }}
+                  initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.9 }}
+                  transition={{ duration: 0.3, delay: shouldReduceMotion ? 0 : i * 0.06 }}
                   className="flex items-center gap-3 text-sm text-muted-foreground"
                 >
                   <div className="w-7 h-7 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
@@ -129,11 +156,12 @@ const AboutSection = () => {
 
           {/* Our Solution */}
           <motion.div
-            initial={{ opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="group relative bg-card rounded-2xl p-8 lg:p-10 border border-primary/20 shadow-[var(--card-shadow)] hover:shadow-[var(--card-hover-shadow)] hover:-translate-y-2 transition-all duration-500 flex flex-col overflow-hidden"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.25 }}
+            variants={rightCardVariants}
+            transition={{ duration: 0.55, delay: shouldReduceMotion ? 0 : 0.06 }}
+            className="group relative bg-card rounded-2xl p-8 lg:p-10 border border-primary/20 shadow-[var(--card-shadow)] hover:shadow-[var(--card-hover-shadow)] hover:-translate-y-2 transition-all duration-500 flex flex-col overflow-hidden will-change-transform"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="absolute inset-0 rounded-2xl border-2 border-primary/0 group-hover:border-primary/20 transition-all duration-500" />
@@ -155,10 +183,10 @@ const AboutSection = () => {
               {solutionItems.map((item, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, x: 10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08 }}
+                  initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.9 }}
+                  transition={{ duration: 0.3, delay: shouldReduceMotion ? 0 : i * 0.06 }}
                   className="flex items-center gap-3 text-sm text-foreground"
                 >
                   <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">

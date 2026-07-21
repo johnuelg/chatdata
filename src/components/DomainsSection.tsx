@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useDomains } from "@/hooks/useDomains";
 import { getIconComponent } from "@/components/admin/settings/DomainIconPicker";
@@ -20,6 +20,7 @@ const fallbackDomains = [
 const DomainsSection = () => {
   const { data: dbDomains } = useDomains();
   const { t, isRtl } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
   const domains = dbDomains && dbDomains.length > 0
     ? dbDomains.map(d => ({ abbreviation: d.abbreviation, name: d.name, color: d.color, icon: d.icon || "activity" }))
     : fallbackDomains;
@@ -162,7 +163,7 @@ const DomainsSection = () => {
         initial={false}
         animate={false}
         transition={{ duration: 0 }}
-        whileHover={{ y: -4 }}
+        whileHover={shouldReduceMotion ? undefined : { y: -4 }}
         className="group w-full snap-start"
       >
         <div className="h-[154px] sm:h-[168px] md:h-[176px] rounded-xl border border-border/60 bg-card shadow-[0_8px_20px_-16px_hsl(var(--foreground)/0.24)] transition-all duration-300 group-hover:shadow-[0_14px_26px_-18px_hsl(var(--foreground)/0.24)] group-hover:-translate-y-0.5">
@@ -194,10 +195,10 @@ const DomainsSection = () => {
 
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.55 }}
           className="text-center mb-10 md:mb-16"
         >
           <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest mb-4">
@@ -211,7 +212,13 @@ const DomainsSection = () => {
           </p>
         </motion.div>
 
-        <div className="relative">
+        <motion.div
+          className="relative"
+          initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.45, delay: shouldReduceMotion ? 0 : 0.05 }}
+        >
           <button
             onClick={() => scroll("left")}
             aria-label="Previous domain"
@@ -246,7 +253,7 @@ const DomainsSection = () => {
           >
             <ChevronRight className="w-4 h-4" />
           </button>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

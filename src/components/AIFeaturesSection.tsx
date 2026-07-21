@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { MessageSquare, FileText, FileSearch, LayoutGrid } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -25,6 +25,12 @@ const borderColorMap = {
 
 const AIFeaturesSection = () => {
   const { t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
+
+  const introInitial = shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 };
+  const introWhileInView = { opacity: 1, y: 0 };
+  const cardInitial = shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 };
+  const cardWhileInView = { opacity: 1, y: 0 };
 
   return (
     <section id="features" className="py-20 md:py-32 relative bg-background">
@@ -34,10 +40,10 @@ const AIFeaturesSection = () => {
 
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          initial={introInitial}
+          whileInView={introWhileInView}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.55 }}
           className="text-center mb-14 md:mb-20"
         >
           <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest mb-4">
@@ -55,11 +61,11 @@ const AIFeaturesSection = () => {
           {featureKeys.map((feature, i) => (
             <motion.div
               key={feature.titleKey}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              className={`group relative rounded-2xl border border-border/50 bg-card p-8 shadow-sm hover:shadow-elegant hover:-translate-y-1.5 transition-all duration-500 overflow-hidden ${borderColorMap[feature.color]}`}
+              initial={cardInitial}
+              whileInView={cardWhileInView}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ delay: shouldReduceMotion ? 0 : i * 0.08, duration: 0.45 }}
+              className={`group relative rounded-2xl border border-border/50 bg-card p-8 shadow-sm hover:shadow-elegant hover:-translate-y-1.5 transition-all duration-500 overflow-hidden will-change-transform ${borderColorMap[feature.color]}`}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="relative z-10">
