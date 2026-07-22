@@ -21,16 +21,51 @@ const SettingsLogoManagement = ({
 }: SettingsLogoManagementProps) => {
   const [uploading, setUploading] = useState(false);
 
+  const validateLogoFile = (file: File) => {
+    const allowedTypes = ["image/png", "image/svg+xml"];
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+    const allowedExtensions = ["png", "svg"];
+
+    if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
+      throw new Error("Only .png and .svg files are allowed");
+    }
+
+    if (file.type && !allowedTypes.includes(file.type)) {
+      throw new Error("Only PNG and SVG image formats are allowed");
+    }
+
+    return fileExtension;
+  };
+
+  const assertAdminSession = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Please sign in again");
+
+    const { data: role, error: roleError } = await supabase
+      .from("user_roles")
+      .select("user_id")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (roleError) throw roleError;
+    if (!role) throw new Error("Only admin users can upload logos");
+  };
+
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
-      const path = `logo/site-logo.${ext}`;
+      await assertAdminSession();
+
+      const ext = validateLogoFile(file);
+      const path = `logo/site-logo-${Date.now()}.${ext}`;
       const { error: uploadErr } = await supabase.storage
-        .from("site-assets").upload(path, file, { upsert: true });
+        .from("site-assets").upload(path, file, { upsert: false, contentType: file.type || undefined });
       if (uploadErr) throw uploadErr;
+
       const { data: urlData } = supabase.storage.from("site-assets").getPublicUrl(path);
       const newLogo = { ...logo, url: urlData.publicUrl };
       onLogoChange(newLogo);
@@ -63,7 +98,12 @@ const SettingsLogoManagement = ({
           </div>
           <div className="space-y-2 flex-1">
             <label className="relative cursor-pointer">
-              <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
+              <input
+                type="file"
+                accept=".png,.svg,image/png,image/svg+xml"
+                onChange={handleLogoUpload}
+                className="hidden"
+              />
               <Button variant="outline" size="sm" className="gap-2" asChild>
                 <span>{uploading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />} Upload Logo</span>
               </Button>
