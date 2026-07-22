@@ -17,6 +17,37 @@ const SettingsLoginPage = ({ loginPage, onChange, onSaveAll, saving = false }: S
   const [uploadingBg, setUploadingBg] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
 
+  const validateImageFile = (file: File) => {
+    const allowedTypes = ["image/png", "image/svg+xml"];
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+    const allowedExtensions = ["png", "svg"];
+
+    if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
+      throw new Error("Only .png and .svg files are allowed");
+    }
+
+    if (file.type && !allowedTypes.includes(file.type)) {
+      throw new Error("Only PNG and SVG image formats are allowed");
+    }
+
+    return fileExtension;
+  };
+
+  const assertAdminSession = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Please sign in again");
+
+    const { data: role, error: roleError } = await supabase
+      .from("user_roles")
+      .select("user_id")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (roleError) throw roleError;
+    if (!role) throw new Error("Only admin users can upload images");
+  };
+
   const handleUpload = async (
     file: File,
     pathPrefix: string,
@@ -25,11 +56,13 @@ const SettingsLoginPage = ({ loginPage, onChange, onSaveAll, saving = false }: S
   ) => {
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
-      const path = `login/${pathPrefix}.${ext}`;
+      await assertAdminSession();
+
+      const ext = validateImageFile(file);
+      const path = `login/${pathPrefix}-${Date.now()}.${ext}`;
       const { error: uploadErr } = await supabase.storage
         .from("site-assets")
-        .upload(path, file, { upsert: true });
+        .upload(path, file, { upsert: false, contentType: file.type || undefined });
       if (uploadErr) throw uploadErr;
       const { data: urlData } = supabase.storage.from("site-assets").getPublicUrl(path);
       const updated = { ...loginPage, [field]: urlData.publicUrl };
@@ -61,7 +94,7 @@ const SettingsLoginPage = ({ loginPage, onChange, onSaveAll, saving = false }: S
             )}
           </div>
           <label className="relative cursor-pointer">
-            <input type="file" accept="image/*" onChange={(e) => {
+            <input type="file" accept=".png,.svg,image/png,image/svg+xml" onChange={(e) => {
               const f = e.target.files?.[0];
               if (f) handleUpload(f, "bg-image", "bg_image", setUploadingBg);
             }} className="hidden" />
@@ -89,7 +122,7 @@ const SettingsLoginPage = ({ loginPage, onChange, onSaveAll, saving = false }: S
             )}
           </div>
           <label className="relative cursor-pointer">
-            <input type="file" accept="image/*" onChange={(e) => {
+            <input type="file" accept=".png,.svg,image/png,image/svg+xml" onChange={(e) => {
               const f = e.target.files?.[0];
               if (f) handleUpload(f, "login-logo", "logo", setUploadingLogo);
             }} className="hidden" />
