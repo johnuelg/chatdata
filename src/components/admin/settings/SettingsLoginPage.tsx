@@ -66,7 +66,7 @@ const SettingsLoginPage = ({ loginPage, onChange, onSaveAll, saving = false }: S
       const { data: urlData } = supabase.storage.from("site-assets").getPublicUrl(path);
       const updated = { ...loginPage, [field]: urlData.publicUrl };
       onChange(updated);
-      toast({ title: `${field === "bg_image" ? "Background" : "Logo"} uploaded successfully` });
+      toast({ title: "Background uploaded successfully" });
     } catch (err: any) {
       toast({ title: "Upload failed", description: err.message, variant: "destructive" });
     } finally {
