@@ -15,7 +15,6 @@ interface SettingsLoginPageProps {
 
 const SettingsLoginPage = ({ loginPage, onChange, onSaveAll, saving = false }: SettingsLoginPageProps) => {
   const [uploadingBg, setUploadingBg] = useState(false);
-  const [uploadingLogo, setUploadingLogo] = useState(false);
 
   const validateImageFile = (file: File) => {
     const allowedTypes = ["image/png", "image/svg+xml"];
@@ -51,7 +50,7 @@ const SettingsLoginPage = ({ loginPage, onChange, onSaveAll, saving = false }: S
   const handleUpload = async (
     file: File,
     pathPrefix: string,
-    field: "bg_image" | "logo",
+    field: "bg_image",
     setUploading: (v: boolean) => void
   ) => {
     setUploading(true);
@@ -105,7 +104,7 @@ const SettingsLoginPage = ({ loginPage, onChange, onSaveAll, saving = false }: S
         </div>
       </section>
 
-      {/* Login Logo */}
+      {/* Login Logo Source */}
       <section className="rounded-2xl border border-border bg-card p-6 space-y-4">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -113,24 +112,9 @@ const SettingsLoginPage = ({ loginPage, onChange, onSaveAll, saving = false }: S
           </div>
           <h2 className="font-heading font-bold text-lg">Login Logo</h2>
         </div>
-        <div className="flex items-center gap-6">
-          <div className="w-20 h-20 rounded-xl border border-border bg-secondary/50 flex items-center justify-center overflow-hidden">
-            {loginPage.logo ? (
-              <img src={loginPage.logo} alt="Login Logo" className="w-full h-full object-contain" />
-            ) : (
-              <span className="text-xs text-muted-foreground">No logo</span>
-            )}
-          </div>
-          <label className="relative cursor-pointer">
-            <input type="file" accept=".png,.svg,image/png,image/svg+xml" onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) handleUpload(f, "login-logo", "logo", setUploadingLogo);
-            }} className="hidden" />
-            <Button variant="outline" size="sm" className="gap-2" asChild>
-              <span>{uploadingLogo ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />} Upload Logo</span>
-            </Button>
-          </label>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Login logo is automatically synced from <strong>Settings → Logo Management</strong>. Upload your brand logo once there to update login, header, footer, and other branded areas.
+        </p>
       </section>
 
       {/* Title */}
