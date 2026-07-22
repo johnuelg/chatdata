@@ -79,7 +79,8 @@ const AdminLogin = () => {
   // Get login page customization from site settings
   const loginSettings = (settings as any)?.login_page ?? {};
   const bgImage = loginSettings.bg_image || "/images/login-bg.png";
-  const loginLogo = loginSettings.logo || "/images/hospital-logo.svg";
+  const loginLogo = settings?.logo?.url || "/images/hospital-logo.svg";
+  const loginLogoAlt = settings?.logo?.alt || "Hospital Logo";
   const loginTitle = loginSettings.title_en || t.hospitalName;
   const loginTitleAr = loginSettings.title_ar || t.hospitalNameAr;
 
@@ -214,7 +215,7 @@ const AdminLogin = () => {
         <div className="text-center mb-6 group brand-logo-link">
           <img
             src={loginLogo}
-            alt="Hospital Logo"
+            alt={loginLogoAlt}
             className="brand-logo brand-logo-login mx-auto mb-3"
           />
           <h1 className="text-2xl font-heading font-bold text-primary-foreground drop-shadow-md">
