@@ -138,6 +138,60 @@
 }
 
 @layer utilities {
+  .site-header-shell {
+    @apply border-b border-border/70 bg-card/90 backdrop-blur-md;
+  }
+
+  .site-header-top {
+    @apply border-border/60 bg-card/88;
+  }
+
+  .site-header-scrolled {
+    @apply border-border/80 bg-card/94;
+  }
+
+  .site-header-ambient {
+    @apply pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500;
+  }
+
+  .dark .site-header-shell {
+    background: linear-gradient(180deg, hsl(var(--card) / 0.82), hsl(var(--card) / 0.72));
+    box-shadow: inset 0 -1px 0 hsl(var(--border) / 0.55), 0 10px 30px hsl(var(--background) / 0.35);
+  }
+
+  .dark .site-header-top {
+    background: linear-gradient(180deg, hsl(var(--card) / 0.78), hsl(var(--card) / 0.68));
+  }
+
+  .dark .site-header-scrolled {
+    background: linear-gradient(180deg, hsl(var(--card) / 0.9), hsl(var(--card) / 0.78));
+  }
+
+  .dark .site-header-ambient {
+    opacity: 1;
+    background:
+      radial-gradient(54% 130% at 50% -26%, hsl(var(--primary) / 0.24) 0%, hsl(var(--primary) / 0.06) 34%, transparent 72%),
+      linear-gradient(90deg, transparent 0%, hsl(var(--primary) / 0.04) 28%, hsl(var(--primary) / 0.07) 50%, hsl(var(--primary) / 0.04) 72%, transparent 100%);
+  }
+
+  .header-nav-button {
+    @apply rounded-lg px-3 py-2 text-sm font-medium text-foreground/84 transition-colors duration-300;
+  }
+
+  .header-nav-button:hover {
+    @apply bg-primary/10 text-primary;
+  }
+
+  .header-control-pill {
+    @apply rounded-full bg-secondary/85;
+  }
+
+  .dark .header-control-pill {
+    background: hsl(var(--secondary) / 0.75);
+    border: 1px solid hsl(var(--border) / 0.58);
+    box-shadow: inset 0 1px 0 hsl(var(--primary) / 0.08);
+  }
+
   .brand-lockup {
     @apply inline-flex items-center gap-3 rounded-lg text-left focus:outline-none;
     transition: transform 220ms ease, filter 220ms ease;
