@@ -115,13 +115,7 @@ const HeroSection = () => {
   return (
     <section id="home" className="relative min-h-[100svh] flex flex-col items-center justify-center pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 md:pb-24 overflow-hidden gradient-hero">
       {/* Soft blue radial gradient backdrop */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 55% at 50% 55%, hsl(var(--primary) / 0.18) 0%, hsl(var(--primary) / 0.08) 35%, transparent 70%)",
-        }}
-      />
+      <div className="hero-ambient-glow absolute inset-0 pointer-events-none" />
       {/* Soft animated background shapes */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div
