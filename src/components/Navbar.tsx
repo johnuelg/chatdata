@@ -106,12 +106,11 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "bg-card/95 backdrop-blur-md border-b border-border/80"
-          : "bg-card/90 backdrop-blur-md border-b border-border/60"
+      className={`site-header-shell fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isScrolled ? "site-header-scrolled" : "site-header-top"
       }`}
     >
+      <div className="site-header-ambient" aria-hidden="true" />
       <div className="container mx-auto px-4 sm:px-6 h-16 md:h-20 flex items-center justify-between">
         {/* Logo */}
         <button
@@ -149,7 +148,7 @@ const Navbar = () => {
               key={link.en}
               type="button"
               onClick={() => scrollTo(link.href)}
-              className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors duration-300"
+              className="header-nav-button"
             >
               {lang === "ar" ? link.ar : link.en}
             </button>
@@ -157,7 +156,7 @@ const Navbar = () => {
           <div className="relative" ref={aiMenuRef}>
             <button
               onClick={() => setIsAIOpen(!isAIOpen)}
-              className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors duration-300 flex items-center gap-1"
+              className="header-nav-button flex items-center gap-1"
             >
               {lang === "ar" ? "الذكاء الاصطناعي" : "AI"} <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isAIOpen ? "rotate-180" : ""}`} />
             </button>
@@ -185,7 +184,7 @@ const Navbar = () => {
         {/* Right side */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Language Toggle */}
-          <div className="hidden md:flex items-center gap-1 bg-secondary/90 rounded-full p-1">
+          <div className="header-control-pill hidden md:flex items-center gap-1 p-1">
             <button
               onClick={() => setLang("en")}
               className={`px-2 py-1 rounded-full text-[11px] font-bold transition-all duration-300 ${lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
@@ -200,7 +199,7 @@ const Navbar = () => {
             </button>
           </div>
           {/* Theme Toggle */}
-          <div className="hidden md:flex items-center gap-1 bg-secondary/80 rounded-full p-1">
+          <div className="header-control-pill hidden md:flex items-center gap-1 p-1">
             <button
               onClick={() => { if (isDark) toggleTheme(); }}
               className={`p-1.5 rounded-full transition-all duration-300 ${!isDark ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
